@@ -3,7 +3,7 @@ package shapes;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import main.Game;
+import components.Grid;
 
 /**
  * Represents abstract Shape object that can be drawn to the Game JPanel
@@ -18,7 +18,7 @@ public abstract class Shape {
 	/**
 	 * Indent amount for a Shape relative to a {@code Game.Box}
 	 */
-	public final static int INDENT = 10;
+	public final static int INDENT = Grid.BOX_WIDTH / 10;
 
 	/**
 	 * x coordinate for this Shape

@@ -3,6 +3,8 @@ package components;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import main.Game;
+import main.Main;
 import shapes.O;
 import shapes.Shape;
 import shapes.ShapeTag;
@@ -20,11 +22,13 @@ import shapes.X;
 
 public class Grid {
 
-	public static final int BOX_WIDTH = 100;
+	public static final int BOX_WIDTH = ((3 * Game.HEIGHT) / 4) / Main.GAME_SIZE;
 
 	private static final Color COLOR = Color.WHITE;
 
-	private static final int QUADS = 9;
+	private static final int QUADS = Main.GAME_SIZE * Main.GAME_SIZE;
+
+	private static final int MATCH_NUM = Main.GAME_SIZE - 1;
 
 	private Shape[][] shapes;
 
@@ -36,7 +40,8 @@ public class Grid {
 	private int filledShapes;
 
 	public Grid(int x, int y) {
-		this.shapes = new Shape[Grid.QUADS / 3][Grid.QUADS / 3];
+		
+		this.shapes = new Shape[Main.GAME_SIZE][Main.GAME_SIZE];
 		this.boxes = new Box[Grid.QUADS];
 
 		this.x = x;
@@ -61,7 +66,7 @@ public class Grid {
 
 		for (int index = 0; index < this.boxes.length; index++) {
 
-			if (index % 3 == 0 && index > 0) {
+			if (index % Main.GAME_SIZE == 0 && index > 0) {
 				workingY += Grid.BOX_WIDTH;
 				workingX = this.x;
 			}
@@ -90,10 +95,20 @@ public class Grid {
 		}
 
 		// g.drawLine(this.x, this.y, this.x + 3 * Grid.BOX_WIDTH, this.y);
-		g.drawLine(this.x + Grid.BOX_WIDTH, this.y, this.x + Grid.BOX_WIDTH, this.y + 3 * Grid.BOX_WIDTH);
-		g.drawLine(this.x + 2 * Grid.BOX_WIDTH, this.y, this.x + 2 * Grid.BOX_WIDTH, this.y + 3 * Grid.BOX_WIDTH);
-		g.drawLine(this.x, this.y + Grid.BOX_WIDTH, this.x + 3 * Grid.BOX_WIDTH, this.y + Grid.BOX_WIDTH);
-		g.drawLine(this.x, this.y + 2 * Grid.BOX_WIDTH, this.x + 3 * Grid.BOX_WIDTH, this.y + 2 * Grid.BOX_WIDTH);
+
+		for (int mult = 1; mult < Main.GAME_SIZE; mult++) {
+			g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y, this.x + mult * Grid.BOX_WIDTH,
+					this.y + Main.GAME_SIZE * Grid.BOX_WIDTH);
+			g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH, this.x + Main.GAME_SIZE * Grid.BOX_WIDTH,
+					this.y + mult * Grid.BOX_WIDTH);
+		}
+
+		/*
+		 * g.setColor(Color.RED);
+		 * 
+		 * for (Box b : this.boxes) { g.drawRect(b.startX, b.startY, b.width, b.width);
+		 * }
+		 */
 
 	}
 
@@ -115,8 +130,9 @@ public class Grid {
 			int endX = coordinates[2];
 			int endY = coordinates[3];
 
-			if (x >= startX && x <= endX && y >= startY && y <= endY && this.shapes[index / 3][index % 3] == null) {
-				this.shapes[index / 3][index % 3] = (tag == ShapeTag.SHAPE_X)
+			if (x >= startX && x <= endX && y >= startY && y <= endY
+					&& this.shapes[index / Main.GAME_SIZE][index % Main.GAME_SIZE] == null) {
+				this.shapes[index / Main.GAME_SIZE][index % Main.GAME_SIZE] = (tag == ShapeTag.SHAPE_X)
 						? new X(startX + Shape.INDENT, startY + Shape.INDENT)
 						: new O(startX + Shape.INDENT, startY + Shape.INDENT);
 				this.filledShapes++;
@@ -157,10 +173,10 @@ public class Grid {
 					}
 				}
 			}
-			if (matchPair1 == 2) {
-				return new Object[] {true, this.shapes[0][i].getTag()};
-			} else if (matchPair2 == 2) {
-				return new Object[] {true, this.shapes[i][0].getTag()};
+			if (matchPair1 == Grid.MATCH_NUM) {
+				return new Object[] { true, this.shapes[0][i].getTag() };
+			} else if (matchPair2 == Grid.MATCH_NUM) {
+				return new Object[] { true, this.shapes[i][0].getTag() };
 			}
 			matchPair1 = 0;
 			matchPair2 = 0;
@@ -168,29 +184,30 @@ public class Grid {
 
 		matchPair1 = 0;
 		matchPair2 = 0;
-		
+
 		int length = this.shapes.length - 1;
+		System.out.println();
 		for (int i = 1; i < this.shapes.length; i++) {
 			if (this.shapes[0][0] != null && this.shapes[i][i] != null) {
 				if (this.shapes[0][0].getTag() == this.shapes[i][i].getTag()) {
 					matchPair1++;
 				}
 			}
-			
-			if (this.shapes[length][length] != null && this.shapes[length - i][length - i] != null) {
-				if (this.shapes[length][length].getTag() == this.shapes[length - i][length - i].getTag()) {
+
+			if (this.shapes[0][length] != null && this.shapes[i][length - i] != null) {
+				if (this.shapes[0][length].getTag() == this.shapes[i][length - i].getTag()) {
 					matchPair2++;
 				}
 			}
 		}
-		
-		if (matchPair1 == 2) {
-			return new Object[] {true, this.shapes[0][0].getTag()};
-		} else if (matchPair2 == 2) {
-			return new Object[] {true, this.shapes[length][length]};
+
+		if (matchPair1 == Grid.MATCH_NUM) {
+			return new Object[] { true, this.shapes[0][0].getTag() };
+		} else if (matchPair2 == Grid.MATCH_NUM) {
+			return new Object[] { true, this.shapes[0][length].getTag() };
 		}
 
-		return new Object[] {false};
+		return new Object[] { false };
 	}
 
 	public int filledBoxes() {

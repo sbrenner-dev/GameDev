@@ -17,6 +17,8 @@ public class Main {
 	 * Title of the game to launch
 	 */
 	public static final String GAME_NAME = "Tic Tac Toe";
+	
+	public static final int GAME_SIZE = 3;
 
 	/**
 	 * Launches the instance of the game

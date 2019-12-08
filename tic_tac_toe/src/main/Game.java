@@ -32,12 +32,12 @@ public class Game extends JFrame {
 	/**
 	 * Width for this Game
 	 */
-	public static final int WIDTH = 500;
+	public static final int WIDTH = 1920;
 
 	/**
 	 * Height for this Game
 	 */
-	public static final int HEIGHT = 400;
+	public static final int HEIGHT = 1080;
 
 	/**
 	 * Thread to run game on
@@ -252,7 +252,7 @@ public class Game extends JFrame {
 					Game.this.hud.changeTag(Game.this.active_Player.getShapeTypeAsTag());
 				}
 
-				if (Game.this.game_Grid.filledBoxes() >= 5) {
+				if (Game.this.game_Grid.filledBoxes() >= 2 * Main.GAME_SIZE - 1) {
 					Object[] out = Game.this.game_Grid.checkWin();
 					if ((boolean) out[0]) {
 						
