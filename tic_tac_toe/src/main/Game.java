@@ -1,7 +1,6 @@
 package main;
 
 import java.awt.Color;
-
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -10,9 +9,9 @@ import java.awt.event.MouseMotionListener;
 import java.util.Random;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import components.Grid;
+import components.HUD;
 import components.Player;
 import shapes.ShapeTag;
 
@@ -41,11 +40,6 @@ public class Game extends JFrame {
 	public static final int HEIGHT = 400;
 
 	/**
-	 * JPanel that has listeners as components
-	 */
-	private JPanel game_Panel;
-
-	/**
 	 * Thread to run game on
 	 */
 	private Thread game_Thread;
@@ -61,14 +55,29 @@ public class Game extends JFrame {
 	private Player pX;
 
 	/**
-	 * Player Y
+	 * Player O
 	 */
-	private Player pY;
+	private Player pO;
 
 	/**
 	 * Player actively making a move
 	 */
 	private Player active_Player;
+
+	/**
+	 * Field representing if the state if the JFrame has been changed
+	 * <p>
+	 * Used to optimize render time and overall performance
+	 * <p>
+	 * In this case, the JFrame will not have to re-draw every time it refreshes
+	 * <p>
+	 * Only if it is changed
+	 */
+	private boolean state_Changed;
+
+	private HUD hud;
+	
+	private boolean state_Won;
 
 	/**
 	 * Constructor for this game
@@ -86,22 +95,24 @@ public class Game extends JFrame {
 	 * Initializes specifications and fields for this Game
 	 */
 	public void init() {
-		this.game_Panel = new JPanel();
+
+		this.state_Changed = true;
+		this.state_Won = false;
 
 		UserMouseInput umi = new UserMouseInput();
-		this.game_Panel.addMouseListener(umi);
-		this.game_Panel.addMouseMotionListener(umi);
-
-		this.add(this.game_Panel);
+		this.addMouseListener(umi);
+		this.addMouseMotionListener(umi);
 
 		this.setSize(new Dimension(Game.WIDTH, Game.HEIGHT));
 		this.setVisible(true);
 
-		this.game_Grid = new Grid((int) (Game.WIDTH * 0.1), (int) (Game.HEIGHT * 0.1));
+		this.game_Grid = new Grid((int) (0.1 * Game.WIDTH), (int) (0.1 * Game.HEIGHT));
 
 		this.pX = new Player(ShapeTag.SHAPE_X);
-		this.pY = new Player(ShapeTag.SHAPE_O);
-		this.active_Player = new Random().nextInt(2) == 1 ? pX : pY;
+		this.pO = new Player(ShapeTag.SHAPE_O);
+		this.active_Player = new Random().nextInt(2) == 1 ? pX : pO;
+
+		this.hud = new HUD(this.pX, this.pO, this.active_Player.getShapeTypeAsTag());
 
 		this.game_Thread = new Thread(new GameRunner());
 		this.game_Thread.start();
@@ -114,16 +125,23 @@ public class Game extends JFrame {
 	 */
 	@Override
 	public void paint(Graphics g) {
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, WIDTH, HEIGHT);
-		this.game_Grid.draw(g);
-		if (this.game_Grid.isFilled()) {
+		if (this.state_Changed) {
+			this.state_Changed = false;
+			g.setColor(Color.BLACK);
+			g.fillRect(0, 0, WIDTH, HEIGHT);
+			this.game_Grid.draw(g);
+			this.hud.draw(g);
+			
+		}
+		if (this.game_Grid.isFilled() || this.state_Won) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
 			this.game_Grid.clear();
+			this.state_Won = false;
+			this.state_Changed = true;
 		}
 	}
 
@@ -132,7 +150,7 @@ public class Game extends JFrame {
 	 * <p>
 	 * Contains the Game loop
 	 * 
-	 * @author Samuel Brennero
+	 * @author Samuel Brenner
 	 *
 	 */
 	private class GameRunner implements Runnable {
@@ -140,7 +158,7 @@ public class Game extends JFrame {
 		/**
 		 * Sleep time for proper rendering and visualization of the Game
 		 */
-		private static final int REFRESH_TIME = 100;
+		private static final int REFRESH_TIME = 1;
 
 		/**
 		 * Method that runs the game loop on the thread
@@ -161,7 +179,7 @@ public class Game extends JFrame {
 	}
 
 	/**
-	 * Inner class that contains listeners for user mouse inputi
+	 * Inner class that contains listeners for user mouse input
 	 * 
 	 * @author Samuel Brenner
 	 *
@@ -229,11 +247,31 @@ public class Game extends JFrame {
 				int y = e.getY();
 
 				if (Game.this.game_Grid.placeShape(Game.this.active_Player.getShapeTypeAsTag(), x, y)) {
-					Game.this.active_Player = Game.this.active_Player == Game.this.pX ? pY : pX;
+					Game.this.state_Changed = true;
+					Game.this.active_Player = Game.this.active_Player == Game.this.pX ? Game.this.pO : Game.this.pX;
+					Game.this.hud.changeTag(Game.this.active_Player.getShapeTypeAsTag());
 				}
 
-				if (Game.this.game_Grid.checkWin()) {
-
+				if (Game.this.game_Grid.filledBoxes() >= 5) {
+					Object[] out = Game.this.game_Grid.checkWin();
+					if ((boolean) out[0]) {
+						
+						Player winner = null;
+						
+						if((ShapeTag) out[1] == ShapeTag.SHAPE_O) {
+							winner = Game.this.pO;
+							winner.incrementWins();
+						} else {
+							winner = Game.this.pX;
+							winner.incrementWins();
+						}
+					
+						Game.this.active_Player = winner;
+						
+						Game.this.hud.changeTag(winner.getShapeTypeAsTag());
+						
+						Game.this.state_Won = true;
+					}
 				}
 			}
 		}

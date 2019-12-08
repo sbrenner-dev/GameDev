@@ -77,5 +77,9 @@ public abstract class Shape {
 	public int getY() {
 		return y;
 	}
+	
+	public ShapeTag getTag() {
+		return this.tag;
+	}
 
 }
