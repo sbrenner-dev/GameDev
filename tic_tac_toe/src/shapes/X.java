@@ -31,6 +31,8 @@ public class X extends Shape {
 	 */
 	@Override
 	public void draw(Graphics g) {
+		
+		g.setColor(this.color);
 
 		int width = Grid.BOX_WIDTH - 2 * Shape.INDENT;
 

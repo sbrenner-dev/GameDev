@@ -20,9 +20,18 @@ public class Main {
 
 	/**
 	 * Size of Grid on the Game
+	 * 
 	 * @version 1.0 changed manually/internally, no UI set up to handle custom sizes
 	 */
-	public static final int GAME_SIZE = 300;
+	public static final int GAME_SIZE = 3;
+
+	/**
+	 * Number of matches one shape needs to match with another in a row in order to
+	 * win
+	 * 
+	 * @version 1.0 changed manually/internally, no UI set up to handle custom sizes
+	 */
+	public static final int NUM_TO_MATCH = Main.GAME_SIZE - 1;
 
 	/**
 	 * Launches the instance of the game

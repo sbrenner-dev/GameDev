@@ -23,6 +23,8 @@ public class HUD {
 	 * {@code Color} object for the Color of this HUD when drawn to the JFrame
 	 */
 	private static final Color COLOR = Color.WHITE;
+	
+	private static final Color RESET_COLOR = Color.BLACK;
 
 	/**
 	 * Player X
@@ -72,6 +74,11 @@ public class HUD {
 	 * @param g {@code Graphics} component to use to draw to the JFrame
 	 */
 	public void draw(Graphics g) {
+		
+		g.setColor(HUD.RESET_COLOR);
+		
+		g.fillRect(3 * Game.WIDTH / 4, Game.HEIGHT / 2 - 15, 100, 50);
+		
 		g.setColor(HUD.COLOR);
 		g.drawString("Active Player: " + this.active, 3 * Game.WIDTH / 4,
 				Game.HEIGHT / 2);

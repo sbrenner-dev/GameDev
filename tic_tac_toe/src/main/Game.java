@@ -147,30 +147,33 @@ public class Game extends JFrame {
 				int x = e.getX();
 				int y = e.getY();
 
-				if (Game.this.game_Grid.placeShape(Game.this.active_Player.getShapeTypeAsTag(), x, y)) {
+				if (Game.this.game_Grid
+						.placeShape(Game.this.active_Player.getShapeTypeAsTag(), x, y)) {
 					Game.this.state_Changed = true;
-					Game.this.active_Player = Game.this.active_Player == Game.this.pX ? Game.this.pO : Game.this.pX;
+					Game.this.active_Player = Game.this.active_Player == Game.this.pX
+							? Game.this.pO
+							: Game.this.pX;
 					Game.this.hud.changeTag(Game.this.active_Player.getShapeTypeAsTag());
 				}
 
 				if (Game.this.game_Grid.filledBoxes() >= 2 * Main.GAME_SIZE - 1) {
 					Object[] out = Game.this.game_Grid.checkWin();
 					if ((boolean) out[0]) {
-						
+
 						Player winner = null;
-						
-						if((ShapeTag) out[1] == ShapeTag.SHAPE_O) {
+
+						if ((ShapeTag) out[1] == ShapeTag.SHAPE_O) {
 							winner = Game.this.pO;
 							winner.incrementWins();
 						} else {
 							winner = Game.this.pX;
 							winner.incrementWins();
 						}
-					
+
 						Game.this.active_Player = winner;
-						
+
 						Game.this.hud.changeTag(winner.getShapeTypeAsTag());
-						
+
 						Game.this.state_Won = true;
 					}
 				}
@@ -218,7 +221,7 @@ public class Game extends JFrame {
 	 * Player actively making a move
 	 */
 	private Player active_Player;
-	
+
 	/**
 	 * Field representing if the state if the JFrame has been changed
 	 * <p>
@@ -240,6 +243,8 @@ public class Game extends JFrame {
 	 */
 	private boolean state_Won;
 
+	private boolean state_Init;
+
 	/**
 	 * Constructor for this game
 	 * 
@@ -251,7 +256,7 @@ public class Game extends JFrame {
 		this.init();
 
 	}
-
+	
 	/**
 	 * Initializes specifications and fields for this Game
 	 */
@@ -259,6 +264,7 @@ public class Game extends JFrame {
 
 		this.state_Changed = true;
 		this.state_Won = false;
+		this.state_Init = true;
 
 		UserMouseInput umi = new UserMouseInput();
 		this.addMouseListener(umi);
@@ -278,7 +284,7 @@ public class Game extends JFrame {
 		this.game_Thread = new Thread(new GameRunner());
 		this.game_Thread.start();
 	}
-
+	
 	/**
 	 * Draws to this JFrame
 	 * 
@@ -286,15 +292,20 @@ public class Game extends JFrame {
 	 */
 	@Override
 	public void paint(Graphics g) {
-		if (this.state_Changed) { // OR state_Won -> Refresh grid then, no other time
-			this.state_Changed = false;
+		if (this.state_Init) { // OR state_Won -> Refresh grid then, no other time
+			this.state_Init = false;
 			g.setColor(Color.BLACK);
 			g.fillRect(0, 0, WIDTH, HEIGHT);
-			System.out.println(g);
-			System.out.println(Grid.BOX_WIDTH);
 			this.game_Grid.draw(g);
 			this.hud.draw(g);
 		}
+
+		if (this.state_Changed) {
+			this.game_Grid.draw(g);
+			this.hud.draw(g);
+			this.state_Changed = false;
+		}
+
 		if (this.game_Grid.isFilled() || this.state_Won) {
 			try {
 				Thread.sleep(1000);

@@ -66,7 +66,7 @@ public class Grid {
 	 * Global number of {@code Shape} must match with in order to be a valid win on
 	 * this Grid
 	 */
-	private static final int MATCH_NUM = Main.GAME_SIZE - 1;
+	private static final int MATCH_NUM = Main.NUM_TO_MATCH;
 
 	/**
 	 * Matrix of Shapes that represent the board they sit on visually
@@ -95,6 +95,12 @@ public class Grid {
 	 * Number of shapes in boxes that have been filled on this Grid
 	 */
 	private int filledBoxes;
+
+	private boolean state_Init;
+
+	private Shape current_Shape;
+
+	private boolean clearShapes;
 
 	/**
 	 * Constructor for this Grid
@@ -196,10 +202,14 @@ public class Grid {
 	public void clear() {
 		for (int i = 0; i < this.shapes.length; i++) {
 			for (int j = 0; j < this.shapes[i].length; j++) {
-				this.shapes[i][j] = null;
+				if (this.shapes[i][j] != null) {
+					this.shapes[i][j].setColor(Color.BLACK);
+				}
+				this.clearShapes = true;
 			}
 		}
 		this.filledBoxes = 0;
+		this.current_Shape = null;
 	}
 
 	/**
@@ -214,35 +224,40 @@ public class Grid {
 		 * ONLY NEED TO UPDATE MOST RECENTLY ADDED SHAPE
 		 */
 
-		for (Shape[] rShapes : this.shapes) {
-			for (Shape s : rShapes) {
-				if (s != null) {
-					s.draw(g);
-				}
-			}
+		if (this.current_Shape != null) {
+			this.current_Shape.draw(g);
 		}
 
-		// g.drawLine(this.x, this.y, this.x + 3 * Grid.BOX_WIDTH, this.y);
+		if (this.clearShapes) {
+			for (int i = 0; i < this.shapes.length; i++) {
+				for (int j = 0; j < this.shapes[i].length; j++) {
+					Shape s = this.shapes[i][j];
+					if (s != null) {
+						s.draw(g);
+						s.setColor(Color.GREEN);
+						this.shapes[i][j] = null;
+					}
+				}
+			}
+			this.clearShapes = false;
+		}
 
 		/*
 		 * DO NOT ALWAYS NEED TO RENDER THE ENTIRE GRID EVERY TIME A CHANGE IS MADE
+		 * ONLY NEED TO ENTER ONCE WHEN GRID IS FIRST INITIALIZES
 		 */
-		
-		for (int mult = 1; mult < Main.GAME_SIZE; mult++) {
-			g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y,
-					this.x + mult * Grid.BOX_WIDTH,
-					this.y + Main.GAME_SIZE * Grid.BOX_WIDTH);
-			g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH,
-					this.x + Main.GAME_SIZE * Grid.BOX_WIDTH,
-					this.y + mult * Grid.BOX_WIDTH);
-		}
 
-		/*
-		 * g.setColor(Color.RED);
-		 * 
-		 * for (Box b : this.boxes) { g.drawRect(b.startX, b.startY, b.width, b.width);
-		 * }
-		 */
+		if (this.state_Init) {
+			this.state_Init = false;
+			for (int mult = 1; mult < Main.GAME_SIZE; mult++) {
+				g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y,
+						this.x + mult * Grid.BOX_WIDTH,
+						this.y + Main.GAME_SIZE * Grid.BOX_WIDTH);
+				g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH,
+						this.x + Main.GAME_SIZE * Grid.BOX_WIDTH,
+						this.y + mult * Grid.BOX_WIDTH);
+			}
+		}
 
 	}
 
@@ -259,6 +274,10 @@ public class Grid {
 	 * Setup for this.boxes
 	 */
 	private void init() {
+
+		this.state_Init = true;
+
+		this.clearShapes = false;
 
 		int workingX = this.x;
 		int workingY = this.y;
@@ -305,14 +324,17 @@ public class Grid {
 			int startY = coordinates[1];
 			int endX = coordinates[2];
 			int endY = coordinates[3];
-
+			
 			if (x >= startX && x <= endX && y >= startY && y <= endY
 					&& this.shapes[index / Main.GAME_SIZE][index
 							% Main.GAME_SIZE] == null) {
+
+				this.current_Shape = tag == ShapeTag.SHAPE_X
+						? new X(startX + Shape.INDENT, startY + Shape.INDENT)
+						: new O(startX + Shape.INDENT, startY + Shape.INDENT);
+
 				this.shapes[index / Main.GAME_SIZE][index
-						% Main.GAME_SIZE] = tag == ShapeTag.SHAPE_X
-								? new X(startX + Shape.INDENT, startY + Shape.INDENT)
-								: new O(startX + Shape.INDENT, startY + Shape.INDENT);
+						% Main.GAME_SIZE] = this.current_Shape;
 				this.filledBoxes++;
 				return true;
 			}

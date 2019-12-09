@@ -21,11 +21,6 @@ public abstract class Shape {
 	public final static int INDENT = Grid.BOX_WIDTH / 10;
 
 	/**
-	 * Color for this Shape
-	 */
-	protected static final Color COLOR = Color.WHITE;
-
-	/**
 	 * x coordinate for this Shape
 	 */
 	protected int x;
@@ -39,6 +34,8 @@ public abstract class Shape {
 	 * ShapeTage for this Shape
 	 */
 	private ShapeTag tag;
+	
+	protected Color color;
 
 	/**
 	 * Constructor
@@ -51,6 +48,7 @@ public abstract class Shape {
 		this.x = x;
 		this.y = y;
 		this.tag = tag;
+		this.color = Color.GREEN;
 	}
 
 	/**
@@ -85,6 +83,10 @@ public abstract class Shape {
 	 */
 	public int getY() {
 		return this.y;
+	}
+	
+	public void setColor(Color color) {
+		this.color = color;
 	}
 
 }
