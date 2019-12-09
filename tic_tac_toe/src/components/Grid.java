@@ -227,7 +227,7 @@ public class Grid {
 		/*
 		 * DO NOT ALWAYS NEED TO RENDER THE ENTIRE GRID EVERY TIME A CHANGE IS MADE
 		 */
-
+		
 		for (int mult = 1; mult < Main.GAME_SIZE; mult++) {
 			g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y,
 					this.x + mult * Grid.BOX_WIDTH,
@@ -249,14 +249,14 @@ public class Grid {
 	/**
 	 * Accesses number of filled boxes on this Grid
 	 * 
-	 * @return number of {@code Box} objects filled in {@code this.boxes}
+	 * @return number of {@code Box} objects filled in this.boxes
 	 */
 	public int filledBoxes() {
 		return this.filledBoxes;
 	}
 
 	/**
-	 * Setup for {@code boxes}
+	 * Setup for this.boxes
 	 */
 	private void init() {
 
@@ -294,7 +294,7 @@ public class Grid {
 	 *            place in a {@code Box}
 	 * @param x   x location of cursor
 	 * @param y   y location of cursor
-	 * @return true if s was added to the Grid
+	 * @return true if a {@code Shape} of type tag was added to the Grid
 	 */
 	public boolean placeShape(ShapeTag tag, int x, int y) {
 		for (int index = 0; index < this.boxes.length; index++) {

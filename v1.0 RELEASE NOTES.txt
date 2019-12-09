@@ -1,0 +1,7 @@
+-- VERISON 1.0 RELEASE NOTES -- 
+
+FUNCTIONALITY: Supports up to 750 x 750 tic tac toe board, can place Xs and Os, calculates wins, keeps track of scores
+
+KNOWN BUGS: Tendency to crash when initial size is very large - but can handle occasionally
+
+FUTURE IMPROVEMENTS: Optimized Image Rendering, UI, playable AI, save and load larger games and win streaks, User profiles

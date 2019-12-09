@@ -22,7 +22,7 @@ public class Main {
 	 * Size of Grid on the Game
 	 * @version 1.0 changed manually/internally, no UI set up to handle custom sizes
 	 */
-	public static final int GAME_SIZE = 30;
+	public static final int GAME_SIZE = 300;
 
 	/**
 	 * Launches the instance of the game

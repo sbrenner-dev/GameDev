@@ -187,12 +187,12 @@ public class Game extends JFrame {
 	/**
 	 * Width for this Game
 	 */
-	public static final int WIDTH = 1000;
+	public static final int WIDTH = 1400;
 
 	/**
 	 * Height for this Game
 	 */
-	public static final int HEIGHT = 800;
+	public static final int HEIGHT = 1000;
 
 	/**
 	 * Thread to run game on
@@ -290,6 +290,8 @@ public class Game extends JFrame {
 			this.state_Changed = false;
 			g.setColor(Color.BLACK);
 			g.fillRect(0, 0, WIDTH, HEIGHT);
+			System.out.println(g);
+			System.out.println(Grid.BOX_WIDTH);
 			this.game_Grid.draw(g);
 			this.hud.draw(g);
 		}
