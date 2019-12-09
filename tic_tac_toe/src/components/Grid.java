@@ -277,6 +277,12 @@ public class Grid {
 
 	}
 
+	/**
+	 * Returns true if all the {@code Box} objects in the interal array are filled
+	 * with {@code Shape} objects
+	 * 
+	 * @return true if all the boxes in this Grid are filled with Shapes
+	 */
 	public boolean isFilled() {
 		return this.filledBoxes == Grid.QUADS;
 	}
@@ -284,9 +290,10 @@ public class Grid {
 	/**
 	 * Adds a Shape to the Grid
 	 * 
-	 * @param s Shape to place in a certain box
-	 * @param x x location of cursor
-	 * @param y y location of cursor
+	 * @param tag {@code ShapeTag} identifier as to what kind of {@code Shape} to
+	 *            place in a {@code Box}
+	 * @param x   x location of cursor
+	 * @param y   y location of cursor
 	 * @return true if s was added to the Grid
 	 */
 	public boolean placeShape(ShapeTag tag, int x, int y) {

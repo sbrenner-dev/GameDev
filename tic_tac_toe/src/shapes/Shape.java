@@ -21,6 +21,11 @@ public abstract class Shape {
 	public final static int INDENT = Grid.BOX_WIDTH / 10;
 
 	/**
+	 * Color for this Shape
+	 */
+	protected static final Color COLOR = Color.WHITE;
+
+	/**
 	 * x coordinate for this Shape
 	 */
 	protected int x;
@@ -31,11 +36,6 @@ public abstract class Shape {
 	protected int y;
 
 	/**
-	 * Color for this Shape
-	 */
-	protected static final Color COLOR = Color.WHITE;
-
-	/**
 	 * ShapeTage for this Shape
 	 */
 	private ShapeTag tag;
@@ -43,8 +43,8 @@ public abstract class Shape {
 	/**
 	 * Constructor
 	 * 
-	 * @param x relative x coordinate
-	 * @param y relative y coordinate
+	 * @param x   relative x coordinate
+	 * @param y   relative y coordinate
 	 * @param tag ShapeTag to identify this Shape
 	 */
 	public Shape(int x, int y, ShapeTag tag) {
@@ -61,6 +61,15 @@ public abstract class Shape {
 	public abstract void draw(Graphics g);
 
 	/**
+	 * Access to the {@code ShapeTag} object that identifies this Shape
+	 * 
+	 * @return ShapeTag that identifies this Shape
+	 */
+	public ShapeTag getTag() {
+		return this.tag;
+	}
+
+	/**
 	 * Returns Shape's y value
 	 * 
 	 * @return Shape's y value
@@ -75,11 +84,7 @@ public abstract class Shape {
 	 * @return Shape's y value
 	 */
 	public int getY() {
-		return y;
-	}
-	
-	public ShapeTag getTag() {
-		return this.tag;
+		return this.y;
 	}
 
 }
