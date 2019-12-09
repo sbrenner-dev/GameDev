@@ -25,127 +25,6 @@ import shapes.ShapeTag;
 public class Game extends JFrame {
 
 	/**
-	 * Random generated serialVersionUID for this JFrame
-	 */
-	private static final long serialVersionUID = -7071532049979466544L;
-
-	/**
-	 * Width for this Game
-	 */
-	public static final int WIDTH = 1920;
-
-	/**
-	 * Height for this Game
-	 */
-	public static final int HEIGHT = 1080;
-
-	/**
-	 * Thread to run game on
-	 */
-	private Thread game_Thread;
-
-	/**
-	 * Grid that contains runtime game components
-	 */
-	private Grid game_Grid;
-
-	/**
-	 * Player X
-	 */
-	private Player pX;
-
-	/**
-	 * Player O
-	 */
-	private Player pO;
-
-	/**
-	 * Player actively making a move
-	 */
-	private Player active_Player;
-
-	/**
-	 * Field representing if the state if the JFrame has been changed
-	 * <p>
-	 * Used to optimize render time and overall performance
-	 * <p>
-	 * In this case, the JFrame will not have to re-draw every time it refreshes
-	 * <p>
-	 * Only if it is changed
-	 */
-	private boolean state_Changed;
-
-	private HUD hud;
-	
-	private boolean state_Won;
-
-	/**
-	 * Constructor for this game
-	 * 
-	 * @param title Title of Game
-	 */
-	public Game(String title) {
-		super(title);
-
-		this.init();
-
-	}
-
-	/**
-	 * Initializes specifications and fields for this Game
-	 */
-	public void init() {
-
-		this.state_Changed = true;
-		this.state_Won = false;
-
-		UserMouseInput umi = new UserMouseInput();
-		this.addMouseListener(umi);
-		this.addMouseMotionListener(umi);
-
-		this.setSize(new Dimension(Game.WIDTH, Game.HEIGHT));
-		this.setVisible(true);
-
-		this.game_Grid = new Grid((int) (0.1 * Game.WIDTH), (int) (0.1 * Game.HEIGHT));
-
-		this.pX = new Player(ShapeTag.SHAPE_X);
-		this.pO = new Player(ShapeTag.SHAPE_O);
-		this.active_Player = new Random().nextInt(2) == 1 ? pX : pO;
-
-		this.hud = new HUD(this.pX, this.pO, this.active_Player.getShapeTypeAsTag());
-
-		this.game_Thread = new Thread(new GameRunner());
-		this.game_Thread.start();
-	}
-
-	/**
-	 * Draws to this JFrame
-	 * 
-	 * @param g Graphics object to draw to this
-	 */
-	@Override
-	public void paint(Graphics g) {
-		if (this.state_Changed) {
-			this.state_Changed = false;
-			g.setColor(Color.BLACK);
-			g.fillRect(0, 0, WIDTH, HEIGHT);
-			this.game_Grid.draw(g);
-			this.hud.draw(g);
-			
-		}
-		if (this.game_Grid.isFilled() || this.state_Won) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException ex) {
-				ex.printStackTrace();
-			}
-			this.game_Grid.clear();
-			this.state_Won = false;
-			this.state_Changed = true;
-		}
-	}
-
-	/**
 	 * Inner class that can be used on a game thread
 	 * <p>
 	 * Contains the Game loop
@@ -206,6 +85,28 @@ public class Game extends JFrame {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
+		}
+
+		/**
+		 * Sets {@code mouse_Moved} value to true
+		 * 
+		 * @param e MouseEvent object
+		 */
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			this.mouse_Pressed = false;
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
 		}
 
 		/**
@@ -276,28 +177,132 @@ public class Game extends JFrame {
 			}
 		}
 
-		/**
-		 * Sets {@code mouse_Moved} value to true
-		 * 
-		 * @param e MouseEvent object
-		 */
-		@Override
-		public void mouseDragged(MouseEvent e) {
-			this.mouse_Pressed = false;
-		}
+	}
 
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
+	/**
+	 * Random generated serialVersionUID for this JFrame
+	 */
+	private static final long serialVersionUID = -7071532049979466544L;
 
-		@Override
-		public void mouseExited(MouseEvent e) {
-		}
+	/**
+	 * Width for this Game
+	 */
+	public static final int WIDTH = 1000;
 
-		@Override
-		public void mouseMoved(MouseEvent e) {
-		}
+	/**
+	 * Height for this Game
+	 */
+	public static final int HEIGHT = 800;
 
+	/**
+	 * Thread to run game on
+	 */
+	private Thread game_Thread;
+
+	/**
+	 * Grid that contains runtime game components
+	 */
+	private Grid game_Grid;
+
+	/**
+	 * Player X
+	 */
+	private Player pX;
+
+	/**
+	 * Player O
+	 */
+	private Player pO;
+
+	/**
+	 * Player actively making a move
+	 */
+	private Player active_Player;
+	
+	/**
+	 * Field representing if the state if the JFrame has been changed
+	 * <p>
+	 * Used to optimize render time and overall performance
+	 * <p>
+	 * In this case, the JFrame will not have to re-draw every time it refreshes
+	 * <p>
+	 * Only if it is changed
+	 */
+	private boolean state_Changed;
+
+	/**
+	 * HUD object for this Game
+	 */
+	private HUD hud;
+
+	/**
+	 * Internal flag for the state of the game being a won state
+	 */
+	private boolean state_Won;
+
+	/**
+	 * Constructor for this game
+	 * 
+	 * @param title Title of Game
+	 */
+	public Game(String title) {
+		super(title);
+
+		this.init();
+
+	}
+
+	/**
+	 * Initializes specifications and fields for this Game
+	 */
+	public void init() {
+
+		this.state_Changed = true;
+		this.state_Won = false;
+
+		UserMouseInput umi = new UserMouseInput();
+		this.addMouseListener(umi);
+		this.addMouseMotionListener(umi);
+
+		this.setSize(new Dimension(Game.WIDTH, Game.HEIGHT));
+		this.setVisible(true);
+
+		this.game_Grid = new Grid((int) (0.1 * Game.WIDTH), (int) (0.1 * Game.HEIGHT));
+
+		this.pX = new Player(ShapeTag.SHAPE_X);
+		this.pO = new Player(ShapeTag.SHAPE_O);
+		this.active_Player = new Random().nextInt(2) == 1 ? this.pX : this.pO;
+
+		this.hud = new HUD(this.pX, this.pO, this.active_Player.getShapeTypeAsTag());
+
+		this.game_Thread = new Thread(new GameRunner());
+		this.game_Thread.start();
+	}
+
+	/**
+	 * Draws to this JFrame
+	 * 
+	 * @param g Graphics object to draw to this
+	 */
+	@Override
+	public void paint(Graphics g) {
+		if (this.state_Changed) { // OR state_Won -> Refresh grid then, no other time
+			this.state_Changed = false;
+			g.setColor(Color.BLACK);
+			g.fillRect(0, 0, WIDTH, HEIGHT);
+			this.game_Grid.draw(g);
+			this.hud.draw(g);
+		}
+		if (this.game_Grid.isFilled() || this.state_Won) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException ex) {
+				ex.printStackTrace();
+			}
+			this.game_Grid.clear();
+			this.state_Won = false;
+			this.state_Changed = true;
+		}
 	}
 
 }
