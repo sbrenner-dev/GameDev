@@ -63,12 +63,6 @@ public class Grid {
 	private static final int QUADS = Main.GAME_SIZE * Main.GAME_SIZE;
 
 	/**
-	 * Global number of {@code Shape} must match with in order to be a valid win on
-	 * this Grid
-	 */
-	private static final int MATCH_NUM = Main.NUM_TO_MATCH;
-
-	/**
 	 * Matrix of Shapes that represent the board they sit on visually
 	 * <p>
 	 * Matrix makes algorithmic win logic easier
@@ -96,10 +90,20 @@ public class Grid {
 	 */
 	private int filledBoxes;
 
+	/**
+	 * Internal flag for the state of this Grid being first initialized
+	 */
 	private boolean state_Init;
 
+	/**
+	 * The current {@code Shape} being added to this Grid
+	 */
 	private Shape current_Shape;
 
+	/**
+	 * Internal flag for letting the draw() method know if the {@code Shape} objects
+	 * need to be cleared
+	 */
 	private boolean clearShapes;
 
 	/**
@@ -154,9 +158,9 @@ public class Grid {
 					}
 				}
 			}
-			if (matchPair1 == Grid.MATCH_NUM) {
+			if (matchPair1 == Main.NUM_TO_MATCH) {
 				return new Object[] { true, this.shapes[0][i].getTag() };
-			} else if (matchPair2 == Grid.MATCH_NUM) {
+			} else if (matchPair2 == Main.NUM_TO_MATCH) {
 				return new Object[] { true, this.shapes[i][0].getTag() };
 			}
 			matchPair1 = 0;
@@ -187,9 +191,9 @@ public class Grid {
 			}
 		}
 
-		if (matchPair1 == Grid.MATCH_NUM) {
+		if (matchPair1 == Main.NUM_TO_MATCH) {
 			return new Object[] { true, this.shapes[0][0].getTag() };
-		} else if (matchPair2 == Grid.MATCH_NUM) {
+		} else if (matchPair2 == Main.NUM_TO_MATCH) {
 			return new Object[] { true, this.shapes[0][length].getTag() };
 		}
 
@@ -220,10 +224,6 @@ public class Grid {
 	public void draw(Graphics g) {
 		g.setColor(Grid.COLOR);
 
-		/*
-		 * ONLY NEED TO UPDATE MOST RECENTLY ADDED SHAPE
-		 */
-
 		if (this.current_Shape != null) {
 			this.current_Shape.draw(g);
 		}
@@ -241,11 +241,6 @@ public class Grid {
 			}
 			this.clearShapes = false;
 		}
-
-		/*
-		 * DO NOT ALWAYS NEED TO RENDER THE ENTIRE GRID EVERY TIME A CHANGE IS MADE
-		 * ONLY NEED TO ENTER ONCE WHEN GRID IS FIRST INITIALIZES
-		 */
 
 		if (this.state_Init) {
 			this.state_Init = false;
@@ -324,7 +319,7 @@ public class Grid {
 			int startY = coordinates[1];
 			int endX = coordinates[2];
 			int endY = coordinates[3];
-			
+
 			if (x >= startX && x <= endX && y >= startY && y <= endY
 					&& this.shapes[index / Main.GAME_SIZE][index
 							% Main.GAME_SIZE] == null) {

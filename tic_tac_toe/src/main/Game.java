@@ -3,9 +3,8 @@ package main;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -23,6 +22,72 @@ import shapes.ShapeTag;
  */
 
 public class Game extends JFrame {
+
+	/**
+	 * Random generated serialVersionUID for this JFrame
+	 */
+	private static final long serialVersionUID = -7071532049979466544L;
+
+	/**
+	 * Width for this Game
+	 */
+	public static final int WIDTH = 1200;
+
+	/**
+	 * Height for this Game
+	 */
+	public static final int HEIGHT = 800;
+
+	/**
+	 * Thread to run game on
+	 */
+	private Thread game_Thread;
+
+	/**
+	 * Grid that contains runtime game components
+	 */
+	private Grid game_Grid;
+
+	/**
+	 * Player X
+	 */
+	private Player pX;
+
+	/**
+	 * Player O
+	 */
+	private Player pO;
+
+	/**
+	 * Player actively making a move
+	 */
+	private Player active_Player;
+
+	/**
+	 * Field representing if the state if the JFrame has been changed
+	 * <p>
+	 * Used to optimize render time and overall performance
+	 * <p>
+	 * In this case, the JFrame will not have to re-draw every time it refreshes
+	 * <p>
+	 * Only if it is changed
+	 */
+	private boolean state_Changed;
+
+	/**
+	 * HUD object for this Game
+	 */
+	private HUD hud;
+
+	/**
+	 * Internal flag for the state of the game being a won state
+	 */
+	private boolean state_Won;
+
+	/**
+	 * Internal flag for if the state of the game being initialized
+	 */
+	private boolean state_Init;
 
 	/**
 	 * Inner class that can be used on a game thread
@@ -63,7 +128,7 @@ public class Game extends JFrame {
 	 * @author Samuel Brenner
 	 *
 	 */
-	private class UserMouseInput implements MouseListener, MouseMotionListener {
+	private class UserMouseInput extends MouseAdapter {
 
 		/**
 		 * Field representing if the mouse has been pressed
@@ -95,18 +160,6 @@ public class Game extends JFrame {
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			this.mouse_Pressed = false;
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseMoved(MouseEvent e) {
 		}
 
 		/**
@@ -156,7 +209,7 @@ public class Game extends JFrame {
 					Game.this.hud.changeTag(Game.this.active_Player.getShapeTypeAsTag());
 				}
 
-				if (Game.this.game_Grid.filledBoxes() >= 2 * Main.GAME_SIZE - 1) {
+				if (Game.this.game_Grid.filledBoxes() >= 2 * Main.NUM_TO_MATCH + 1) {
 					Object[] out = Game.this.game_Grid.checkWin();
 					if ((boolean) out[0]) {
 
@@ -183,69 +236,6 @@ public class Game extends JFrame {
 	}
 
 	/**
-	 * Random generated serialVersionUID for this JFrame
-	 */
-	private static final long serialVersionUID = -7071532049979466544L;
-
-	/**
-	 * Width for this Game
-	 */
-	public static final int WIDTH = 1400;
-
-	/**
-	 * Height for this Game
-	 */
-	public static final int HEIGHT = 1000;
-
-	/**
-	 * Thread to run game on
-	 */
-	private Thread game_Thread;
-
-	/**
-	 * Grid that contains runtime game components
-	 */
-	private Grid game_Grid;
-
-	/**
-	 * Player X
-	 */
-	private Player pX;
-
-	/**
-	 * Player O
-	 */
-	private Player pO;
-
-	/**
-	 * Player actively making a move
-	 */
-	private Player active_Player;
-
-	/**
-	 * Field representing if the state if the JFrame has been changed
-	 * <p>
-	 * Used to optimize render time and overall performance
-	 * <p>
-	 * In this case, the JFrame will not have to re-draw every time it refreshes
-	 * <p>
-	 * Only if it is changed
-	 */
-	private boolean state_Changed;
-
-	/**
-	 * HUD object for this Game
-	 */
-	private HUD hud;
-
-	/**
-	 * Internal flag for the state of the game being a won state
-	 */
-	private boolean state_Won;
-
-	private boolean state_Init;
-
-	/**
 	 * Constructor for this game
 	 * 
 	 * @param title Title of Game
@@ -256,7 +246,7 @@ public class Game extends JFrame {
 		this.init();
 
 	}
-	
+
 	/**
 	 * Initializes specifications and fields for this Game
 	 */
@@ -281,10 +271,14 @@ public class Game extends JFrame {
 
 		this.hud = new HUD(this.pX, this.pO, this.active_Player.getShapeTypeAsTag());
 
+		this.setLocationRelativeTo(null);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setVisible(true);
+
 		this.game_Thread = new Thread(new GameRunner());
 		this.game_Thread.start();
 	}
-	
+
 	/**
 	 * Draws to this JFrame
 	 * 

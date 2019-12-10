@@ -1,0 +1,218 @@
+package main;
+
+import java.awt.Button;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+/**
+ * 
+ * @author Samuel Brenner
+ * @version 1.1
+ *
+ */
+
+public class LoadScreen extends JFrame {
+
+	/**
+	 * Randomly generated serialVersionUID
+	 */
+	private static final long serialVersionUID = 196991606721642137L;
+
+	/**
+	 * Title name for this {@code LoadScreen}
+	 */
+	private static final String SCREEN_NAME = "Home";
+
+	/**
+	 * Width for this {@code LoadScreen}
+	 */
+	public static final int WIDTH = 300;
+
+	/**
+	 * Height for this {@code LoadScreen}
+	 */
+	public static final int HEIGHT = 50;
+
+	/**
+	 * {@code Button} used to send input information to main game
+	 */
+	private Button submit_Button;
+
+	/**
+	 * {@code TextField} that takes in the size for the {@code Grid} of the
+	 * {@code Game}
+	 */
+	private TextField size_TField;
+
+	/**
+	 * <{@code TextField} that takes in the number of shapes in a row on the
+	 * {@code Grid} constitutes a win
+	 */
+	private TextField win_TField;
+
+	/**
+	 * {@code JPanel} on which to place the components
+	 */
+	private JPanel panel;
+
+	/**
+	 * Flag that runs the internal instance {@code Thread} object
+	 */
+	private boolean running;
+
+	/**
+	 * Default constructor for this {@code LoadScreen}
+	 */
+	public LoadScreen() {
+		super(LoadScreen.SCREEN_NAME);
+
+		this.init();
+	}
+
+	/**
+	 * Initializes the member variables for this {@code LoadScreen}
+	 */
+	private void init() {
+		this.setSize(new Dimension(LoadScreen.WIDTH, LoadScreen.HEIGHT));
+
+		this.panel = new JPanel() {
+
+			/**
+			 * Inner class randomly generated serialVersionUID
+			 */
+			private static final long serialVersionUID = -2289768367456128276L;
+
+			@Override
+			public void paint(Graphics g) {
+				g.setColor(Color.BLACK);
+				g.fillRect(0, 0, LoadScreen.WIDTH, LoadScreen.HEIGHT);
+
+				// Paint to have a background?
+			}
+		};
+
+		this.add(this.panel);
+
+		this.size_TField = new TextField("Size...", 2);
+		this.size_TField.addKeyListener(new TextFieldEnterOption());
+		this.size_TField.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+				TextField temp = LoadScreen.this.size_TField;
+
+				temp.setText(null);
+				temp.getKeyListeners()[0].keyReleased(
+						new KeyEvent(LoadScreen.this.size_TField, 0, e.getWhen(), 0,
+								KeyEvent.VK_UNDEFINED, KeyEvent.CHAR_UNDEFINED));
+			}
+
+		});
+		this.size_TField.setFocusTraversalKeysEnabled(false);
+		this.panel.add(this.size_TField);
+
+		this.win_TField = new TextField("Number to win...", 5);
+		this.win_TField.addKeyListener(new TextFieldEnterOption());
+		this.panel.add(this.win_TField);
+
+		this.submit_Button = new Button("Start!");
+		this.submit_Button.setPreferredSize(new Dimension(100, 20));
+		this.submit_Button.addActionListener((e) -> {
+			int size = 3;
+			int match = 3;
+			try {
+				size = Integer.parseInt(this.size_TField.getText());
+				match = Integer.parseInt(this.win_TField.getText());
+				if (match > size || size < 2 || size > 3 * Game.HEIGHT / 4) {
+					System.out.println("thrown");
+					throw new NumberFormatException();
+				}
+			} catch (NumberFormatException ex) {
+				size = 3;
+				match = 3;
+			} finally {
+				Main.GAME_SIZE = size;
+				Main.NUM_TO_MATCH = match - 1;
+				this.running = false;
+				this.dispose();
+				new Game(Main.GAME_NAME);
+			}
+		});
+		this.panel.add(this.submit_Button);
+
+		this.setLocationRelativeTo(null);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setVisible(true);
+		this.setFocusable(true);
+		this.requestFocus();
+
+		this.running = true;
+
+		/*
+		 * Thread running to draw String to screen Otherwise, the JFrame would be in a
+		 * static state and would not need to be updated on its own Thread
+		 */
+		new Thread(() -> {
+			while (running) {
+				this.panel.repaint();
+			}
+		}).start();
+
+	}
+
+	/**
+	 * Paints onto the internal {@code JPanel} of this {@code JFrame}
+	 * 
+	 * @param g {@code Graphics} component for this {@code LoadScreen}
+	 */
+	@Override
+	public void paint(Graphics g) {
+		this.panel.paint(g);
+	}
+
+	private class TextFieldEnterOption extends KeyAdapter {
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+
+			/*
+			 * Only executed if the source of this action event is the size_TField
+			 * textfield in {@code LoadScreen}
+			 */
+			if (e.getSource().equals(LoadScreen.this.size_TField)) {
+				LoadScreen.this.win_TField.setText(LoadScreen.this.size_TField.getText());
+			}
+
+			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				// manually trigger button press
+				LoadScreen.this.submit_Button.getActionListeners()[0]
+						.actionPerformed(new ActionEvent(this, 0, "Start"));
+			} else if (e.getKeyCode() == KeyEvent.VK_TAB
+					&& e.getSource().equals(LoadScreen.this.size_TField)) {
+
+				LoadScreen.this.size_TField
+						.setText(LoadScreen.this.size_TField.getText().trim());
+
+				TextField temp = LoadScreen.this.win_TField;
+
+				temp.setFocusable(true);
+				temp.requestFocus();
+				temp.setText(temp.getText().trim());
+				temp.setCaretPosition(temp.getText().trim().length());
+			}
+		}
+
+	}
+
+}

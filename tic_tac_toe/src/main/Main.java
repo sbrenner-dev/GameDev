@@ -23,7 +23,7 @@ public class Main {
 	 * 
 	 * @version 1.0 changed manually/internally, no UI set up to handle custom sizes
 	 */
-	public static final int GAME_SIZE = 3;
+	public static int GAME_SIZE = 3;
 
 	/**
 	 * Number of matches one shape needs to match with another in a row in order to
@@ -31,7 +31,7 @@ public class Main {
 	 * 
 	 * @version 1.0 changed manually/internally, no UI set up to handle custom sizes
 	 */
-	public static final int NUM_TO_MATCH = Main.GAME_SIZE - 1;
+	public static int NUM_TO_MATCH = Main.GAME_SIZE - 1;
 
 	/**
 	 * Launches the instance of the game
@@ -39,7 +39,7 @@ public class Main {
 	 * @param args VM parameters at runtime
 	 */
 	public static void main(String[] args) {
-		new Game(Main.GAME_NAME);
+		new LoadScreen();
 	}
 
 }
