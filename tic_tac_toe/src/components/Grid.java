@@ -41,8 +41,7 @@ public class Grid {
 		}
 
 		public int[] boxCoordinates() {
-			return new int[] { this.startX, this.startY, this.startX + this.width,
-					this.startY + this.width };
+			return new int[] { this.startX, this.startY, this.startX + this.width, this.startY + this.width };
 		}
 
 	}
@@ -106,6 +105,8 @@ public class Grid {
 	 */
 	private boolean clearShapes;
 
+	private int curr_Matches;
+
 	/**
 	 * Constructor for this Grid
 	 * <p>
@@ -138,66 +139,63 @@ public class Grid {
 	 */
 	public Object[] checkWin() {
 
-		int matchPair1 = 0;
-		int matchPair2 = 0;
+		boolean validated = false;
 
-		/*
-		 * Checking rows and columns in one sweep
-		 */
+		for(Shape shapes[] : this.shapes) {
+			for(Shape me : shapes) {
+				if (me != null) {
+					Shape[] myBounds = me.getBounds();
+					for (int n = 0; n < myBounds.length; n++) {
+						this.curr_Matches = 0;
+						Shape next = myBounds[n];
+						Shape opp = myBounds[this.oppositeN(n)];
 
-		for (int i = 0; i < this.shapes[0].length; i++) {
-			for (int j = 1; j < this.shapes.length; j++) {
-				if (this.shapes[0][i] != null && this.shapes[j][i] != null) {
-					if (this.shapes[0][i].getTag() == this.shapes[j][i].getTag()) {
-						matchPair1++;
+						if (next == null) {
+							continue;
+						}
+
+						boolean nextSameAsOpp = false;
+
+						if (next != null && opp != null) {
+							nextSameAsOpp = next.getTag() == opp.getTag();
+						}
+
+						if (!nextSameAsOpp) {
+							validated = this.validate(me, next, n);
+							if (validated) {
+								return new Object[] { validated, me.getTag() };
+							}
+						}
 					}
 				}
-				if (this.shapes[i][0] != null && this.shapes[i][j] != null) {
-					if (this.shapes[i][0].getTag() == this.shapes[i][j].getTag()) {
-						matchPair2++;
-					}
-				}
-			}
-			if (matchPair1 == Main.NUM_TO_MATCH) {
-				return new Object[] { true, this.shapes[0][i].getTag() };
-			} else if (matchPair2 == Main.NUM_TO_MATCH) {
-				return new Object[] { true, this.shapes[i][0].getTag() };
-			}
-			matchPair1 = 0;
-			matchPair2 = 0;
-		}
-
-		matchPair1 = 0;
-		matchPair2 = 0;
-
-		/*
-		 * Checking both diagonals in on sweep
-		 */
-
-		int length = this.shapes.length - 1;
-		System.out.println();
-		for (int i = 1; i < this.shapes.length; i++) {
-			if (this.shapes[0][0] != null && this.shapes[i][i] != null) {
-				if (this.shapes[0][0].getTag() == this.shapes[i][i].getTag()) {
-					matchPair1++;
-				}
-			}
-
-			if (this.shapes[0][length] != null && this.shapes[i][length - i] != null) {
-				if (this.shapes[0][length].getTag() == this.shapes[i][length - i]
-						.getTag()) {
-					matchPair2++;
-				}
 			}
 		}
 
-		if (matchPair1 == Main.NUM_TO_MATCH) {
-			return new Object[] { true, this.shapes[0][0].getTag() };
-		} else if (matchPair2 == Main.NUM_TO_MATCH) {
-			return new Object[] { true, this.shapes[0][length].getTag() };
-		}
+		this.curr_Matches = 0;
 
-		return new Object[] { false };
+		return new Object[] { validated };
+
+	}
+
+	private boolean validate(Shape me, Shape next, int n) {
+		if (next == null && this.curr_Matches < Main.NUM_TO_MATCH) {
+			return false;
+		} else if (this.curr_Matches == Main.NUM_TO_MATCH) {
+			return true;
+		} else if (me.getTag() == next.getTag()) {
+			this.curr_Matches++;
+			return this.validate(next, next.getBounds()[n], n);
+		} else {
+			return false;
+		}
+	}
+
+	private int oppositeN(int n) {
+		if (n < Shape.BOUNDS_SIZE / 2) {
+			return n + Shape.BOUNDS_SIZE / 2;
+		} else {
+			return n - Shape.BOUNDS_SIZE / 2;
+		}
 	}
 
 	/**
@@ -214,6 +212,7 @@ public class Grid {
 		}
 		this.filledBoxes = 0;
 		this.current_Shape = null;
+		this.curr_Matches = 0;
 	}
 
 	/**
@@ -226,6 +225,7 @@ public class Grid {
 
 		if (this.current_Shape != null) {
 			this.current_Shape.draw(g);
+			this.current_Shape = null;
 		}
 
 		if (this.clearShapes) {
@@ -245,11 +245,9 @@ public class Grid {
 		if (this.state_Init) {
 			this.state_Init = false;
 			for (int mult = 1; mult < Main.GAME_SIZE; mult++) {
-				g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y,
-						this.x + mult * Grid.BOX_WIDTH,
+				g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y, this.x + mult * Grid.BOX_WIDTH,
 						this.y + Main.GAME_SIZE * Grid.BOX_WIDTH);
-				g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH,
-						this.x + Main.GAME_SIZE * Grid.BOX_WIDTH,
+				g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH, this.x + Main.GAME_SIZE * Grid.BOX_WIDTH,
 						this.y + mult * Grid.BOX_WIDTH);
 			}
 		}
@@ -269,6 +267,8 @@ public class Grid {
 	 * Setup for this.boxes
 	 */
 	private void init() {
+
+		this.curr_Matches = 0;
 
 		this.state_Init = true;
 
@@ -320,22 +320,112 @@ public class Grid {
 			int endX = coordinates[2];
 			int endY = coordinates[3];
 
-			if (x >= startX && x <= endX && y >= startY && y <= endY
-					&& this.shapes[index / Main.GAME_SIZE][index
-							% Main.GAME_SIZE] == null) {
+			int relRow = index / Main.GAME_SIZE;
+			int relCol = index % Main.GAME_SIZE;
 
-				this.current_Shape = tag == ShapeTag.SHAPE_X
-						? new X(startX + Shape.INDENT, startY + Shape.INDENT)
+			if (x >= startX && x <= endX && y >= startY && y <= endY && this.shapes[relRow][relCol] == null) {
+
+				this.current_Shape = tag == ShapeTag.SHAPE_X ? new X(startX + Shape.INDENT, startY + Shape.INDENT)
 						: new O(startX + Shape.INDENT, startY + Shape.INDENT);
 
-				this.shapes[index / Main.GAME_SIZE][index
-						% Main.GAME_SIZE] = this.current_Shape;
+				this.fillRespectiveBounds(relRow, relCol, this.current_Shape);
+
+				this.shapes[relRow][relCol] = this.current_Shape;
 				this.filledBoxes++;
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	private void fillRespectiveBounds(int row, int col, Shape shape) {
+
+		// Needs optimization - very hardcoded right now!
+
+		Shape[] bounds = shape.getBounds();
+
+		for (int n = 0; n < Shape.BOUNDS_SIZE; n++) {
+
+			Shape comp;
+
+			switch (n) {
+				case 0:
+					if (row - 1 >= 0 && col - 1 >= 0) {
+						comp = this.shapes[row - 1][col - 1];
+						if (comp != null) {
+							bounds[n] = comp;
+							comp.getBounds()[n + 4] = shape;
+						}
+					}
+					break;
+				case 1:
+					if (row - 1 >= 0) {
+						comp = this.shapes[row - 1][col];
+						if (comp != null) {
+							bounds[n] = comp;
+							comp.getBounds()[n + 4] = shape;
+						}
+					}
+					break;
+				case 2:
+					if (row - 1 >= 0 && col + 1 < this.shapes.length) {
+						comp = this.shapes[row - 1][col + 1];
+						if (comp != null) {
+							bounds[n] = comp;
+							comp.getBounds()[n + 4] = shape;
+						}
+					}
+					break;
+				case 3:
+					if (col + 1 < this.shapes.length) {
+						comp = this.shapes[row][col + 1];
+						if (comp != null) {
+							bounds[n] = comp;
+							comp.getBounds()[n + 4] = shape;
+						}
+					}
+					break;
+				case 4:
+					if (row + 1 < this.shapes.length && col + 1 < this.shapes.length) {
+						comp = this.shapes[row + 1][col + 1];
+						if (comp != null) {
+							bounds[n] = comp;
+							comp.getBounds()[n - 4] = shape;
+						}
+					}
+					break;
+				case 5:
+					if (row + 1 < this.shapes.length) {
+						comp = this.shapes[row + 1][col];
+						if (comp != null) {
+							bounds[n] = comp;
+							comp.getBounds()[n - 4] = shape;
+						}
+					}
+					break;
+				case 6:
+					if (row + 1 < this.shapes.length && col - 1 >= 0) {
+						comp = this.shapes[row + 1][col - 1];
+						if (comp != null) {
+							bounds[n] = comp;
+							comp.getBounds()[n - 4] = shape;
+						}
+					}
+					break;
+				case 7:
+					if (col - 1 >= 0) {
+						comp = this.shapes[row][col - 1];
+						if (comp != null) {
+							bounds[n] = comp;
+							comp.getBounds()[n - 4] = shape;
+						}
+					}
+					break;
+			}
+
+		}
+
 	}
 
 }

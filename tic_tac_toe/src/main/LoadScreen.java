@@ -41,7 +41,7 @@ public class LoadScreen extends JFrame {
 	/**
 	 * Height for this {@code LoadScreen}
 	 */
-	public static final int HEIGHT = 50;
+	public static final int HEIGHT = 100;
 
 	/**
 	 * {@code Button} used to send input information to main game
@@ -64,11 +64,6 @@ public class LoadScreen extends JFrame {
 	 * {@code JPanel} on which to place the components
 	 */
 	private JPanel panel;
-
-	/**
-	 * Flag that runs the internal instance {@code Thread} object
-	 */
-	private boolean running;
 
 	/**
 	 * Default constructor for this {@code LoadScreen}
@@ -122,8 +117,14 @@ public class LoadScreen extends JFrame {
 		this.size_TField.setFocusTraversalKeysEnabled(false);
 		this.panel.add(this.size_TField);
 
-		this.win_TField = new TextField("Number to win...", 5);
+		this.win_TField = new TextField("Number to win...", 10);
 		this.win_TField.addKeyListener(new TextFieldEnterOption());
+		this.win_TField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				LoadScreen.this.win_TField.selectAll();
+			}
+		});
 		this.panel.add(this.win_TField);
 
 		this.submit_Button = new Button("Start!");
@@ -134,8 +135,7 @@ public class LoadScreen extends JFrame {
 			try {
 				size = Integer.parseInt(this.size_TField.getText());
 				match = Integer.parseInt(this.win_TField.getText());
-				if (match > size || size < 2 || size > 3 * Game.HEIGHT / 4) {
-					System.out.println("thrown");
+				if (match > size || size < 2 || size > 3 * Game.HEIGHT / 4 / 10) {
 					throw new NumberFormatException();
 				}
 			} catch (NumberFormatException ex) {
@@ -144,7 +144,6 @@ public class LoadScreen extends JFrame {
 			} finally {
 				Main.GAME_SIZE = size;
 				Main.NUM_TO_MATCH = match - 1;
-				this.running = false;
 				this.dispose();
 				new Game(Main.GAME_NAME);
 			}
@@ -156,18 +155,6 @@ public class LoadScreen extends JFrame {
 		this.setVisible(true);
 		this.setFocusable(true);
 		this.requestFocus();
-
-		this.running = true;
-
-		/*
-		 * Thread running to draw String to screen Otherwise, the JFrame would be in a
-		 * static state and would not need to be updated on its own Thread
-		 */
-		new Thread(() -> {
-			while (running) {
-				this.panel.repaint();
-			}
-		}).start();
 
 	}
 
@@ -209,7 +196,7 @@ public class LoadScreen extends JFrame {
 				temp.setFocusable(true);
 				temp.requestFocus();
 				temp.setText(temp.getText().trim());
-				temp.setCaretPosition(temp.getText().trim().length());
+				temp.selectAll();
 			}
 		}
 

@@ -31,12 +31,12 @@ public class Game extends JFrame {
 	/**
 	 * Width for this Game
 	 */
-	public static final int WIDTH = 1200;
+	public static final int WIDTH = 1920;
 
 	/**
 	 * Height for this Game
 	 */
-	public static final int HEIGHT = 800;
+	public static final int HEIGHT = 1080;
 
 	/**
 	 * Thread to run game on

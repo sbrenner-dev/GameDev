@@ -20,6 +20,8 @@ public abstract class Shape {
 	 */
 	public final static int INDENT = Grid.BOX_WIDTH / 10;
 
+	public final static int BOUNDS_SIZE = 8;
+
 	/**
 	 * x coordinate for this Shape
 	 */
@@ -34,8 +36,18 @@ public abstract class Shape {
 	 * ShapeTage for this Shape
 	 */
 	private ShapeTag tag;
-	
+
+	/**
+	 * {@code Color} for this Shape when being drawn to the {@code Grid}
+	 */
 	protected Color color;
+
+	/**
+	 * All the bordering shapes around this {@code Shape} Meaning of indecies in
+	 * ascending order: 0 - Top Left, 1 - Top 2, - Top Right, 3 - Right, 4 - Bottom
+	 * Righ,t 5 - Bottom, 6 - Bottom, Left 7 - Left
+	 */
+	private Shape[] bounds;
 
 	/**
 	 * Constructor
@@ -49,6 +61,8 @@ public abstract class Shape {
 		this.y = y;
 		this.tag = tag;
 		this.color = Color.GREEN;
+
+		this.bounds = new Shape[Shape.BOUNDS_SIZE];
 	}
 
 	/**
@@ -68,25 +82,19 @@ public abstract class Shape {
 	}
 
 	/**
-	 * Returns Shape's y value
-	 * 
-	 * @return Shape's y value
+	 * Sets the color for this {@code Shape} to be drawn to the {@code Grid}
+	 * @param color {@code Color} of this {@code Shape}
 	 */
-	public int getX() {
-		return this.x;
-	}
-
-	/**
-	 * Returns Shape's y value
-	 * 
-	 * @return Shape's y value
-	 */
-	public int getY() {
-		return this.y;
-	}
-	
 	public void setColor(Color color) {
 		this.color = color;
+	}
+	
+	/**
+	 * Returns this {@code Shape}'s bounds array
+	 * @return
+	 */
+	public Shape[] getBounds() {
+		return this.bounds;
 	}
 
 }
