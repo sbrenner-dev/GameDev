@@ -16,7 +16,8 @@ import shapes.X;
  * Consitst of n {@code Box} in an internal array of boxes
  * 
  * @author Samuel Brenner
- * @version 1.0
+ * @version 1.1
+ * @since 1.0
  *
  */
 
@@ -30,16 +31,47 @@ public class Grid {
 	 */
 	private class Box {
 
+		/**
+		 * Upper left hand x coordinate for this {@code Grid.Box}
+		 */
 		private int startX;
+
+		/**
+		 * Upper left hand y coordinate for this {@code Grid.Box}
+		 */
 		private int startY;
+
+		/**
+		 * Width and hence height for this {@code Grid.Box}
+		 */
 		private int width;
 
+		/**
+		 * Constructs a box from an initial (x,y) pair in the upper left hand corner and
+		 * a width
+		 * 
+		 * @param startX initial x value for this {@code Grid.Box}
+		 * @param startY initial y value for this {@code Grid.Box}
+		 * @param width  width for this {@code Grid.Box}
+		 */
 		private Box(int startX, int startY, int width) {
 			this.startX = startX;
 			this.startY = startY;
 			this.width = width;
 		}
 
+		/**
+		 * Returns the coordinates of this box as an array, consitsting of [x1, y1, x2,
+		 * y2], where x1 and y1 are the upper left coordinates and x2 and y2 are the
+		 * lower right coordinates
+		 * <p>
+		 * Can be used as a boundary assistant for validating mouse input from
+		 * {@code Game}
+		 * </p>
+		 * 
+		 * @return array of integers specifying the outer coordinates of this
+		 *         {@code Grid.Box}
+		 */
 		public int[] boxCoordinates() {
 			return new int[] { this.startX, this.startY, this.startX + this.width, this.startY + this.width };
 		}
@@ -105,6 +137,11 @@ public class Grid {
 	 */
 	private boolean clearShapes;
 
+	/**
+	 * The global number of current matches within the process of checking for a
+	 * win, once a certain number of {@code Shape} objects are placed onto the
+	 * screen
+	 */
 	private int curr_Matches;
 
 	/**
@@ -126,6 +163,12 @@ public class Grid {
 
 		this.filledBoxes = 0;
 
+		this.curr_Matches = 0;
+
+		this.state_Init = true;
+
+		this.clearShapes = false;
+
 		this.init();
 	}
 
@@ -141,8 +184,8 @@ public class Grid {
 
 		boolean validated = false;
 
-		for(Shape shapes[] : this.shapes) {
-			for(Shape me : shapes) {
+		for (Shape shapes[] : this.shapes) {
+			for (Shape me : shapes) {
 				if (me != null) {
 					Shape[] myBounds = me.getBounds();
 					for (int n = 0; n < myBounds.length; n++) {
@@ -177,6 +220,22 @@ public class Grid {
 
 	}
 
+	/**
+	 * Recursively validates a {@code Shape} object with one of its surrounding
+	 * Shapes, going from {@code Shape} to {@code Shape} until either the correct
+	 * number of matches is acheived, or the end is reached and false is returned,
+	 * or another shape is hit and false is returned
+	 * 
+	 * @param me   current {@code Shape} object being looked at for further
+	 *             comparison
+	 * @param next the next {@code Shape} object in the recursive sequence
+	 * @param n    the index of the array surrounding the {@code Shape} object to
+	 *             continue the recursion on
+	 * @return boolean {@code true} if the initial {@code Shape} and its successive
+	 *         {@code Shape} objects at a certain node {@code n} form a row, column,
+	 *         or diagonal that constitue a win by the right number of {@code Shape}
+	 *         objects in a row
+	 */
 	private boolean validate(Shape me, Shape next, int n) {
 		if (next == null && this.curr_Matches < Main.NUM_TO_MATCH) {
 			return false;
@@ -190,6 +249,14 @@ public class Grid {
 		}
 	}
 
+	/**
+	 * Based on a size of {@code Shape.BOUNDS_SIZE}, determines the opposite index
+	 * of {@code n} which would appear visually on the opposite side of a given
+	 * {@code Shape} on the {@code Grid}
+	 * 
+	 * @param n the index of comparison
+	 * @return an int representing a visually flipped indexi
+	 */
 	private int oppositeN(int n) {
 		if (n < Shape.BOUNDS_SIZE / 2) {
 			return n + Shape.BOUNDS_SIZE / 2;
@@ -268,12 +335,6 @@ public class Grid {
 	 */
 	private void init() {
 
-		this.curr_Matches = 0;
-
-		this.state_Init = true;
-
-		this.clearShapes = false;
-
 		int workingX = this.x;
 		int workingY = this.y;
 
@@ -339,6 +400,15 @@ public class Grid {
 		return false;
 	}
 
+	/**
+	 * Fills the {@code Shape.bounds} array such that all elements around this
+	 * {@code Shape} are placed into its bounds array, and it is placed into the
+	 * correct location of the other respective {@code Shape} object's arrays
+	 * 
+	 * @param row row of the current shape in this internal array of {@code Shape} objects
+	 * @param col column of the current shape in this internal array of {@code Shape} objects
+	 * @param shape {@code Shape} object for comparison
+	 */
 	private void fillRespectiveBounds(int row, int col, Shape shape) {
 
 		// Needs optimization - very hardcoded right now!

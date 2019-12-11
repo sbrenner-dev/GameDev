@@ -32,8 +32,6 @@ public class Main {
 	 * @version 1.0 changed manually/internally, no UI set up to handle custom sizes
 	 */
 	public static int NUM_TO_MATCH = Main.GAME_SIZE - 1;
-	
-	public static final int MAX_SIZE = 60;
 
 	/**
 	 * Launches the instance of the game

@@ -91,8 +91,6 @@ public class LoadScreen extends JFrame {
 			public void paint(Graphics g) {
 				g.setColor(Color.BLACK);
 				g.fillRect(0, 0, LoadScreen.WIDTH, LoadScreen.HEIGHT);
-
-				// Paint to have a background?
 			}
 		};
 
@@ -108,9 +106,8 @@ public class LoadScreen extends JFrame {
 				TextField temp = LoadScreen.this.size_TField;
 
 				temp.setText(null);
-				temp.getKeyListeners()[0].keyReleased(
-						new KeyEvent(LoadScreen.this.size_TField, 0, e.getWhen(), 0,
-								KeyEvent.VK_UNDEFINED, KeyEvent.CHAR_UNDEFINED));
+				temp.getKeyListeners()[0].keyReleased(new KeyEvent(LoadScreen.this.size_TField, 0, e.getWhen(), 0,
+						KeyEvent.VK_UNDEFINED, KeyEvent.CHAR_UNDEFINED));
 			}
 
 		});
@@ -168,14 +165,22 @@ public class LoadScreen extends JFrame {
 		this.panel.paint(g);
 	}
 
+	/**
+	 * Private inner class that handles similar keyboard input between the two
+	 * {@code TextField} members of this {@code LoadScreen} instance
+	 * 
+	 * @author Samuel Brenner
+	 * @version 1.1
+	 *
+	 */
 	private class TextFieldEnterOption extends KeyAdapter {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
 
 			/*
-			 * Only executed if the source of this action event is the size_TField
-			 * textfield in {@code LoadScreen}
+			 * Only executed if the source of this action event is the size_TField textfield
+			 * in {@code LoadScreen}
 			 */
 			if (e.getSource().equals(LoadScreen.this.size_TField)) {
 				LoadScreen.this.win_TField.setText(LoadScreen.this.size_TField.getText());
@@ -185,11 +190,9 @@ public class LoadScreen extends JFrame {
 				// manually trigger button press
 				LoadScreen.this.submit_Button.getActionListeners()[0]
 						.actionPerformed(new ActionEvent(this, 0, "Start"));
-			} else if (e.getKeyCode() == KeyEvent.VK_TAB
-					&& e.getSource().equals(LoadScreen.this.size_TField)) {
+			} else if (e.getKeyCode() == KeyEvent.VK_TAB && e.getSource().equals(LoadScreen.this.size_TField)) {
 
-				LoadScreen.this.size_TField
-						.setText(LoadScreen.this.size_TField.getText().trim());
+				LoadScreen.this.size_TField.setText(LoadScreen.this.size_TField.getText().trim());
 
 				TextField temp = LoadScreen.this.win_TField;
 
