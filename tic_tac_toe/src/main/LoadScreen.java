@@ -92,6 +92,7 @@ public class LoadScreen extends JFrame {
 				g.setColor(Color.BLACK);
 				g.fillRect(0, 0, LoadScreen.WIDTH, LoadScreen.HEIGHT);
 			}
+			
 		};
 
 		this.add(this.panel);
@@ -179,8 +180,8 @@ public class LoadScreen extends JFrame {
 		public void keyReleased(KeyEvent e) {
 
 			/*
-			 * Only executed if the source of this action event is the size_TField textfield
-			 * in {@code LoadScreen}
+			 * Only executed if the source of this action event is the size_TField TextField
+			 * in this LoadScreen
 			 */
 			if (e.getSource().equals(LoadScreen.this.size_TField)) {
 				LoadScreen.this.win_TField.setText(LoadScreen.this.size_TField.getText());

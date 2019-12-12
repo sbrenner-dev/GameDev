@@ -19,9 +19,7 @@ public class Main {
 	public static final String GAME_NAME = "Tic Tac Toe";
 
 	/**
-	 * Size of Grid on the Game
-	 * 
-	 * @version 1.0 changed manually/internally, no UI set up to handle custom sizes
+	 * Default size of Grid on the Game
 	 */
 	public static int GAME_SIZE = 3;
 
