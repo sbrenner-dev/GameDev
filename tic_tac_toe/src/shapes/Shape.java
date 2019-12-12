@@ -18,7 +18,7 @@ public abstract class Shape {
 	/**
 	 * Indent amount for a Shape relative to a {@code Game.Box}
 	 */
-	public final static int INDENT = Grid.BOX_WIDTH / 10;
+	public final static int INDENT = Grid.BOX_WIDTH / 10 > 0 ? Grid.BOX_WIDTH / 10 : 1;
 
 	public final static int BOUNDS_SIZE = 8;
 
@@ -83,14 +83,16 @@ public abstract class Shape {
 
 	/**
 	 * Sets the color for this {@code Shape} to be drawn to the {@code Grid}
+	 * 
 	 * @param color {@code Color} of this {@code Shape}
 	 */
 	public void setColor(Color color) {
 		this.color = color;
 	}
-	
+
 	/**
 	 * Returns this {@code Shape}'s bounds array
+	 * 
 	 * @return
 	 */
 	public Shape[] getBounds() {

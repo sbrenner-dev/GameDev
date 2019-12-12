@@ -132,7 +132,7 @@ public class LoadScreen extends JFrame {
 			try {
 				size = Integer.parseInt(this.size_TField.getText());
 				match = Integer.parseInt(this.win_TField.getText());
-				if (match > size || size < 2 || size > 3 * Game.HEIGHT / 4 / 10) {
+				if (match < 3 || match > size || size < 3 || size > 3 * Game.HEIGHT / 4 ) {
 					throw new NumberFormatException();
 				}
 			} catch (NumberFormatException ex) {
@@ -148,7 +148,7 @@ public class LoadScreen extends JFrame {
 		this.panel.add(this.submit_Button);
 
 		this.setLocationRelativeTo(null);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
 		this.setFocusable(true);
 		this.requestFocus();

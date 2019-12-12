@@ -286,7 +286,7 @@ public class Game extends JFrame {
 	 */
 	@Override
 	public void paint(Graphics g) {
-		if (this.state_Init) { // OR state_Won -> Refresh grid then, no other time
+		if (this.state_Init) { 
 			this.state_Init = false;
 			g.setColor(Color.BLACK);
 			g.fillRect(0, 0, WIDTH, HEIGHT);
