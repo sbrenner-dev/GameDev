@@ -3,15 +3,22 @@ package main;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Random;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import components.Grid;
 import components.HUD;
 import components.Player;
+import constants.Constants;
+import io.GameSaver;
 import shapes.ShapeTag;
 
 /**
@@ -22,6 +29,13 @@ import shapes.ShapeTag;
  */
 
 public class Game extends JFrame {
+
+	/**
+	 * Title of the game to launch
+	 */
+	private String name;
+
+	public static boolean FROM_SAVE_STATE = false;
 
 	/**
 	 * Random generated serialVersionUID for this JFrame
@@ -200,16 +214,17 @@ public class Game extends JFrame {
 				int x = e.getX();
 				int y = e.getY();
 
-				if (Game.this.game_Grid
-						.placeShape(Game.this.active_Player.getShapeTypeAsTag(), x, y)) {
+				if (Game.this.game_Grid.placeShape(Game.this.active_Player.getShapeTypeAsTag(), x, y)) {
 					Game.this.state_Changed = true;
-					Game.this.active_Player = Game.this.active_Player == Game.this.pX
-							? Game.this.pO
-							: Game.this.pX;
+					Game.this.active_Player = Game.this.active_Player == Game.this.pX ? Game.this.pO : Game.this.pX;
 					Game.this.hud.changeTag(Game.this.active_Player.getShapeTypeAsTag());
+					if (Game.this.name != null && !Game.this.name.endsWith("*")) {
+						Game.this.name += "*";
+						Game.this.setTitle(Game.this.name);
+					}
 				}
 
-				if (Game.this.game_Grid.filledBoxes() >= 2 * Main.NUM_TO_MATCH + 1) {
+				if (Game.this.game_Grid.getFilledBoxes() >= 2 * Constants.NUM_TO_MATCH + 1) {
 					Object[] out = Game.this.game_Grid.checkWin();
 					if ((boolean) out[0]) {
 
@@ -240,28 +255,12 @@ public class Game extends JFrame {
 	 * 
 	 * @param title Title of Game
 	 */
-	public Game(String title) {
-		super(title);
-
-		this.init();
-
-	}
-
-	/**
-	 * Initializes specifications and fields for this Game
-	 */
-	public void init() {
+	public Game() {
+		this.setTitle(this.name);
 
 		this.state_Changed = true;
 		this.state_Won = false;
 		this.state_Init = true;
-
-		UserMouseInput umi = new UserMouseInput();
-		this.addMouseListener(umi);
-		this.addMouseMotionListener(umi);
-
-		this.setSize(new Dimension(Game.WIDTH, Game.HEIGHT));
-		this.setVisible(true);
 
 		this.game_Grid = new Grid((int) (0.1 * Game.WIDTH), (int) (0.1 * Game.HEIGHT));
 
@@ -271,44 +270,112 @@ public class Game extends JFrame {
 
 		this.hud = new HUD(this.pX, this.pO, this.active_Player.getShapeTypeAsTag());
 
+		this.init();
+
+	}
+
+	public Game(Grid grid, Player pX, Player pO, Player active, String name) {
+
+		this.name = name;
+		this.setTitle(this.name);
+
+		Game.FROM_SAVE_STATE = true;
+
+		this.game_Grid = grid;
+		this.game_Grid.init();
+
+		this.pX = pX;
+		this.pO = pO;
+		this.active_Player = active.getShapeTypeAsTag() == ShapeTag.SHAPE_O ? this.pO : this.pX;
+		System.out.println(active.getShapeTypeAsTag());
+
+		this.hud = new HUD(this.pX, this.pO, this.active_Player.getShapeTypeAsTag());
+
+		this.state_Init = true;
+
+		this.init();
+	}
+
+	/**
+	 * Initializes specifications and fields for this Game
+	 */
+	public void init() {
+		this.setSize(new Dimension(Game.WIDTH, Game.HEIGHT));
+
+		UserMouseInput umi = new UserMouseInput();
+		this.addMouseListener(umi);
+		this.addMouseMotionListener(umi);
+
+		this.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_S) {
+					String name = Game.this.name;
+					if (Game.this.name == null) {
+						name = JOptionPane.showInputDialog("Enter save name: ");
+						Game.this.name = name;
+						Game.this.setTitle(name);
+					} else {
+						Game.this.setTitle(name = name.substring(0, name.length() - 1));
+						Game.this.name = name;
+					}
+					GameSaver.saveGame(Game.this.game_Grid, Game.this.pX, Game.this.pO, Game.this.active_Player, name);
+				}
+			}
+		});
+
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				Game.this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+				if (Game.this.name == null || (Game.this.name != null && Game.this.name.endsWith("*"))) {
+					int choice = JOptionPane.showOptionDialog(Game.this.getComponent(0), "Save Game?",
+							"Warning: Game Not Saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE,
+							null, null, null);
+					if (choice == 0) {
+						Game.this.getKeyListeners()[0]
+								.keyReleased(new KeyEvent(Game.this.getComponent(0), 0, 0, 0, KeyEvent.VK_S, 'S'));
+					} else if (choice == 2) {
+						Game.this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+					}
+				}
+			}
+
+		});
+
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
+		this.setResizable(false);
 
 		this.game_Thread = new Thread(new GameRunner());
 		this.game_Thread.start();
 	}
 
-	/**
-	 * Draws to this JFrame
-	 * 
-	 * @param g Graphics object to draw to this
-	 */
-	@Override
 	public void paint(Graphics g) {
-		if (this.state_Init) { 
-			this.state_Init = false;
+		if (Game.this.state_Init) {
+			Game.this.state_Init = false;
 			g.setColor(Color.BLACK);
-			g.fillRect(0, 0, WIDTH, HEIGHT);
-			this.game_Grid.draw(g);
-			this.hud.draw(g);
+			g.fillRect(0, 0, Game.WIDTH, Game.HEIGHT);
+			Game.this.game_Grid.draw(g);
+			Game.this.hud.draw(g);
 		}
 
-		if (this.state_Changed) {
-			this.game_Grid.draw(g);
-			this.hud.draw(g);
-			this.state_Changed = false;
+		if (Game.this.state_Changed) {
+			Game.this.game_Grid.draw(g);
+			Game.this.hud.draw(g);
+			Game.this.state_Changed = false;
 		}
 
-		if (this.game_Grid.isFilled() || this.state_Won) {
+		if (Game.this.game_Grid.isFilled() || Game.this.state_Won) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
-			this.game_Grid.clear();
-			this.state_Won = false;
-			this.state_Changed = true;
+			Game.this.game_Grid.clear();
+			Game.this.state_Won = false;
+			Game.this.state_Changed = true;
 		}
 	}
 

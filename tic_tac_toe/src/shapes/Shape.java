@@ -3,6 +3,8 @@ package shapes;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import components.Grid;
 
 /**
@@ -13,7 +15,7 @@ import components.Grid;
  *
  */
 
-public abstract class Shape {
+public class Shape {
 
 	/**
 	 * Indent amount for a Shape relative to a {@code Game.Box}
@@ -25,12 +27,32 @@ public abstract class Shape {
 	/**
 	 * x coordinate for this Shape
 	 */
-	protected int x;
+	private int x;
+
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	public void setTag(ShapeTag tag) {
+		this.tag = tag;
+	}
 
 	/**
 	 * y coordinate for this Shape
 	 */
-	protected int y;
+	private int y;
 
 	/**
 	 * ShapeTage for this Shape
@@ -40,7 +62,7 @@ public abstract class Shape {
 	/**
 	 * {@code Color} for this Shape when being drawn to the {@code Grid}
 	 */
-	protected Color color;
+	private Color color;
 
 	/**
 	 * All the bordering shapes around this {@code Shape} Meaning of indecies in
@@ -63,6 +85,11 @@ public abstract class Shape {
 		this.color = Color.GREEN;
 
 		this.bounds = new Shape[Shape.BOUNDS_SIZE];
+
+	}
+
+	public Shape() {
+		this.bounds = new Shape[Shape.BOUNDS_SIZE];
 	}
 
 	/**
@@ -70,7 +97,22 @@ public abstract class Shape {
 	 * 
 	 * @param g Graphics component
 	 */
-	public abstract void draw(Graphics g);
+	public void draw(Graphics g) {
+		if (tag == ShapeTag.SHAPE_O) {
+			g.setColor(this.color);
+
+			int width = Grid.BOX_WIDTH - 2 * Shape.INDENT;
+
+			g.drawOval(this.x, this.y, width, width);
+		} else {
+			g.setColor(this.color);
+
+			int width = Grid.BOX_WIDTH - 2 * Shape.INDENT;
+
+			g.drawLine(this.x, this.y, this.x + width, this.y + width);
+			g.drawLine(this.x, this.y + width, this.x + width, this.y);
+		}
+	}
 
 	/**
 	 * Access to the {@code ShapeTag} object that identifies this Shape
@@ -86,6 +128,7 @@ public abstract class Shape {
 	 * 
 	 * @param color {@code Color} of this {@code Shape}
 	 */
+	@JsonIgnore
 	public void setColor(Color color) {
 		this.color = color;
 	}
@@ -93,8 +136,9 @@ public abstract class Shape {
 	/**
 	 * Returns this {@code Shape}'s bounds array
 	 * 
-	 * @return
+	 * @return array {@code Shape} objects that border this {@code Shape} object
 	 */
+	@JsonIgnore
 	public Shape[] getBounds() {
 		return this.bounds;
 	}

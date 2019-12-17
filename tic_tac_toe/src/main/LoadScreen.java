@@ -12,7 +12,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import constants.Constants;
+import io.GameLoader;
 
 /**
  * 
@@ -55,7 +59,7 @@ public class LoadScreen extends JFrame {
 	private TextField size_TField;
 
 	/**
-	 * <{@code TextField} that takes in the number of shapes in a row on the
+	 * {@code TextField} that takes in the number of shapes in a row on the
 	 * {@code Grid} constitutes a win
 	 */
 	private TextField win_TField;
@@ -64,6 +68,8 @@ public class LoadScreen extends JFrame {
 	 * {@code JPanel} on which to place the components
 	 */
 	private JPanel panel;
+
+	private Button load_Button;
 
 	/**
 	 * Default constructor for this {@code LoadScreen}
@@ -92,7 +98,7 @@ public class LoadScreen extends JFrame {
 				g.setColor(Color.BLACK);
 				g.fillRect(0, 0, LoadScreen.WIDTH, LoadScreen.HEIGHT);
 			}
-			
+
 		};
 
 		this.add(this.panel);
@@ -133,20 +139,31 @@ public class LoadScreen extends JFrame {
 			try {
 				size = Integer.parseInt(this.size_TField.getText());
 				match = Integer.parseInt(this.win_TField.getText());
-				if (match < 3 || match > size || size < 3 || size > 3 * Game.HEIGHT / 4 ) {
+				if (match < 3 || match > size || size < 3 || size > 3 * Game.HEIGHT / 4) {
 					throw new NumberFormatException();
 				}
 			} catch (NumberFormatException ex) {
 				size = 3;
 				match = 3;
 			} finally {
-				Main.GAME_SIZE = size;
-				Main.NUM_TO_MATCH = match - 1;
+				Constants.GAME_SIZE = size;
+				Constants.NUM_TO_MATCH = match - 1;
 				this.dispose();
-				new Game(Main.GAME_NAME);
+				new Game();
 			}
 		});
 		this.panel.add(this.submit_Button);
+
+		this.load_Button = new Button("Load Game");
+		this.load_Button.setPreferredSize(new Dimension(100, 20));
+		this.load_Button.addActionListener((e) -> {
+			String gameName = JOptionPane.showInputDialog("Game Name: ");
+			boolean loaded = GameLoader.loadGame(this, gameName);
+			if (loaded) {
+				this.dispose();
+			}
+		});
+		this.panel.add(this.load_Button);
 
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

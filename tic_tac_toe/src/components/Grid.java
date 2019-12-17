@@ -3,12 +3,12 @@ package components;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
+import constants.Constants;
 import main.Game;
-import main.Main;
-import shapes.O;
 import shapes.Shape;
 import shapes.ShapeTag;
-import shapes.X;
 
 /**
  * Representation of the Grid portion of the Game board
@@ -24,64 +24,9 @@ import shapes.X;
 public class Grid {
 
 	/**
-	 * Inner class representing Box object
-	 * 
-	 * @author Samuel Brenner
-	 *
-	 */
-	private class Box {
-
-		/**
-		 * Upper left hand x coordinate for this {@code Grid.Box}
-		 */
-		private int startX;
-
-		/**
-		 * Upper left hand y coordinate for this {@code Grid.Box}
-		 */
-		private int startY;
-
-		/**
-		 * Width and hence height for this {@code Grid.Box}
-		 */
-		private int width;
-
-		/**
-		 * Constructs a box from an initial (x,y) pair in the upper left hand corner and
-		 * a width
-		 * 
-		 * @param startX initial x value for this {@code Grid.Box}
-		 * @param startY initial y value for this {@code Grid.Box}
-		 * @param width  width for this {@code Grid.Box}
-		 */
-		private Box(int startX, int startY, int width) {
-			this.startX = startX;
-			this.startY = startY;
-			this.width = width;
-		}
-
-		/**
-		 * Returns the coordinates of this box as an array, consitsting of [x1, y1, x2,
-		 * y2], where x1 and y1 are the upper left coordinates and x2 and y2 are the
-		 * lower right coordinates
-		 * <p>
-		 * Can be used as a boundary assistant for validating mouse input from
-		 * {@code Game}
-		 * </p>
-		 * 
-		 * @return array of integers specifying the outer coordinates of this
-		 *         {@code Grid.Box}
-		 */
-		public int[] boxCoordinates() {
-			return new int[] { this.startX, this.startY, this.startX + this.width, this.startY + this.width };
-		}
-
-	}
-
-	/**
 	 * Global variable representing the width of each Box lying on this Grid
 	 */
-	public static final int BOX_WIDTH = 3 * Game.HEIGHT / 4 / Main.GAME_SIZE;
+	public static final int BOX_WIDTH = 3 * Game.HEIGHT / 4 / Constants.GAME_SIZE;
 
 	/**
 	 * {@code Color} of this Grid
@@ -91,7 +36,7 @@ public class Grid {
 	/**
 	 * Number of {@code Box} objects on this Grid (aka Quads)
 	 */
-	private static final int QUADS = Main.GAME_SIZE * Main.GAME_SIZE;
+	private static final int QUADS = Constants.GAME_SIZE * Constants.GAME_SIZE;
 
 	/**
 	 * Matrix of Shapes that represent the board they sit on visually
@@ -109,12 +54,12 @@ public class Grid {
 	/**
 	 * initial x coordinate for this Grid
 	 */
-	private final int x;
+	private int x;
 
 	/**
 	 * initial y coordinate for this grid
 	 */
-	private final int y;
+	private int y;
 
 	/**
 	 * Number of shapes in boxes that have been filled on this Grid
@@ -155,8 +100,9 @@ public class Grid {
 	 */
 	public Grid(int x, int y) {
 
-		this.shapes = new Shape[Main.GAME_SIZE][Main.GAME_SIZE];
 		this.boxes = new Box[Grid.QUADS];
+
+		this.shapes = new Shape[Constants.GAME_SIZE][Constants.GAME_SIZE];
 
 		this.x = x;
 		this.y = y;
@@ -172,6 +118,10 @@ public class Grid {
 		this.init();
 	}
 
+	public Grid() {
+
+	}
+
 	/**
 	 * Determines if the state of this Grid is one of a win Only called when the
 	 * number of objects on the board is 2 * {@code Main.GAME_SIZE} - 1
@@ -180,11 +130,12 @@ public class Grid {
 	 *         Grid is a win, and an additional {@code ShapeTag} if the state is a
 	 *         win
 	 */
+	@JsonIgnore
 	public Object[] checkWin() {
 
 		boolean validated = false;
 
-		for (Shape shapes[] : this.shapes) {
+		for (Shape[] shapes : this.shapes) {
 			for (Shape me : shapes) {
 				if (me != null) {
 					Shape[] myBounds = me.getBounds();
@@ -236,10 +187,11 @@ public class Grid {
 	 *         or diagonal that constitue a win by the right number of {@code Shape}
 	 *         objects in a row
 	 */
+	@JsonIgnore
 	private boolean validate(Shape me, Shape next, int n) {
-		if (next == null && this.curr_Matches < Main.NUM_TO_MATCH) {
+		if (next == null && this.curr_Matches < Constants.NUM_TO_MATCH) {
 			return false;
-		} else if (this.curr_Matches == Main.NUM_TO_MATCH) {
+		} else if (this.curr_Matches == Constants.NUM_TO_MATCH) {
 			return true;
 		} else if (me.getTag() == next.getTag()) {
 			this.curr_Matches++;
@@ -247,6 +199,80 @@ public class Grid {
 		} else {
 			return false;
 		}
+	}
+
+	// @JsonIgnore
+	public Shape[][] getShapes() {
+		return shapes;
+	}
+
+	// @JsonIgnore
+	public void setShapes(Shape[][] shapes) {
+		this.shapes = shapes;
+	}
+
+	public Box[] getBoxes() {
+		return boxes;
+	}
+
+	public void setBoxes(Box[] boxes) {
+		this.boxes = boxes;
+	}
+
+	public int getFilledBoxes() {
+		return filledBoxes;
+	}
+
+	public void setFilledBoxes(int filledBoxes) {
+		this.filledBoxes = filledBoxes;
+	}
+
+	public boolean isState_Init() {
+		return state_Init;
+	}
+
+	public void setState_Init(boolean state_Init) {
+		this.state_Init = state_Init;
+	}
+
+	public Shape getCurrent_Shape() {
+		return current_Shape;
+	}
+
+	public void setCurrent_Shape(Shape current_Shape) {
+		this.current_Shape = current_Shape;
+	}
+
+	public boolean isClearShapes() {
+		return clearShapes;
+	}
+
+	public void setClearShapes(boolean clearShapes) {
+		this.clearShapes = clearShapes;
+	}
+
+	public int getCurr_Matches() {
+		return curr_Matches;
+	}
+
+	public void setCurr_Matches(int curr_Matches) {
+		this.curr_Matches = curr_Matches;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
 	}
 
 	/**
@@ -257,6 +283,7 @@ public class Grid {
 	 * @param n the index of comparison
 	 * @return an int representing a visually flipped indexi
 	 */
+	@JsonIgnore
 	private int oppositeN(int n) {
 		if (n < Shape.BOUNDS_SIZE / 2) {
 			return n + Shape.BOUNDS_SIZE / 2;
@@ -268,6 +295,7 @@ public class Grid {
 	/**
 	 * Clears the Shape objects from the Grid
 	 */
+	@JsonIgnore
 	public void clear() {
 		for (int i = 0; i < this.shapes.length; i++) {
 			for (int j = 0; j < this.shapes[i].length; j++) {
@@ -287,10 +315,37 @@ public class Grid {
 	 * 
 	 * @param g Graphics for painting to JPanel
 	 */
+	@JsonIgnore
 	public void draw(Graphics g) {
+
 		g.setColor(Grid.COLOR);
 
+		if (Game.FROM_SAVE_STATE) {
+
+			this.state_Init = false;
+			for (int mult = 1; mult < Constants.GAME_SIZE; mult++) {
+				g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y, this.x + mult * Grid.BOX_WIDTH,
+						this.y + Constants.GAME_SIZE * Grid.BOX_WIDTH);
+				g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH, this.x + Constants.GAME_SIZE * Grid.BOX_WIDTH,
+						this.y + mult * Grid.BOX_WIDTH);
+			}
+
+			if (this.shapes != null) {
+				for (Shape[] shapes : this.shapes) {
+					for (Shape shape : shapes) {
+						if (shape != null) {
+							shape.setColor(Color.GREEN);
+							shape.draw(g);
+						}
+					}
+				}
+			}
+
+			Game.FROM_SAVE_STATE = false;
+		}
+
 		if (this.current_Shape != null) {
+			this.current_Shape.setColor(Color.GREEN);
 			this.current_Shape.draw(g);
 			this.current_Shape = null;
 		}
@@ -311,10 +366,10 @@ public class Grid {
 
 		if (this.state_Init) {
 			this.state_Init = false;
-			for (int mult = 1; mult < Main.GAME_SIZE; mult++) {
+			for (int mult = 1; mult < Constants.GAME_SIZE; mult++) {
 				g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y, this.x + mult * Grid.BOX_WIDTH,
-						this.y + Main.GAME_SIZE * Grid.BOX_WIDTH);
-				g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH, this.x + Main.GAME_SIZE * Grid.BOX_WIDTH,
+						this.y + Constants.GAME_SIZE * Grid.BOX_WIDTH);
+				g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH, this.x + Constants.GAME_SIZE * Grid.BOX_WIDTH,
 						this.y + mult * Grid.BOX_WIDTH);
 			}
 		}
@@ -322,25 +377,17 @@ public class Grid {
 	}
 
 	/**
-	 * Accesses number of filled boxes on this Grid
-	 * 
-	 * @return number of {@code Box} objects filled in this.boxes
-	 */
-	public int filledBoxes() {
-		return this.filledBoxes;
-	}
-
-	/**
 	 * Setup for this.boxes
 	 */
-	private void init() {
+	@JsonIgnore
+	public void init() {
 
 		int workingX = this.x;
 		int workingY = this.y;
 
 		for (int index = 0; index < this.boxes.length; index++) {
 
-			if (index % Main.GAME_SIZE == 0 && index > 0) {
+			if (index % Constants.GAME_SIZE == 0 && index > 0) {
 				workingY += Grid.BOX_WIDTH;
 				workingX = this.x;
 			}
@@ -348,6 +395,16 @@ public class Grid {
 			this.boxes[index] = new Box(workingX, workingY, Grid.BOX_WIDTH);
 
 			workingX += Grid.BOX_WIDTH;
+		}
+
+		if (Game.FROM_SAVE_STATE) {
+			for (Shape[] shapes : this.shapes) {
+				for (Shape shape : shapes) {
+					if (shape != null) {
+						this.placeShape(shape.getTag(), shape.getX(), shape.getY());
+					}
+				}
+			}
 		}
 
 	}
@@ -358,6 +415,7 @@ public class Grid {
 	 * 
 	 * @return true if all the boxes in this Grid are filled with Shapes
 	 */
+	@JsonIgnore
 	public boolean isFilled() {
 		return this.filledBoxes == Grid.QUADS;
 	}
@@ -371,6 +429,7 @@ public class Grid {
 	 * @param y   y location of cursor
 	 * @return true if a {@code Shape} of type tag was added to the Grid
 	 */
+	@JsonIgnore
 	public boolean placeShape(ShapeTag tag, int x, int y) {
 		for (int index = 0; index < this.boxes.length; index++) {
 			Box box = this.boxes[index];
@@ -381,13 +440,12 @@ public class Grid {
 			int endX = coordinates[2];
 			int endY = coordinates[3];
 
-			int relRow = index / Main.GAME_SIZE;
-			int relCol = index % Main.GAME_SIZE;
+			int relRow = index / Constants.GAME_SIZE;
+			int relCol = index % Constants.GAME_SIZE;
 
 			if (x >= startX && x <= endX && y >= startY && y <= endY && this.shapes[relRow][relCol] == null) {
-
-				this.current_Shape = tag == ShapeTag.SHAPE_X ? new X(startX + Shape.INDENT, startY + Shape.INDENT)
-						: new O(startX + Shape.INDENT, startY + Shape.INDENT);
+				
+				this.current_Shape = new Shape(startX + Shape.INDENT, startY + Shape.INDENT, tag);
 
 				this.fillRespectiveBounds(relRow, relCol, this.current_Shape);
 
@@ -400,98 +458,43 @@ public class Grid {
 		return false;
 	}
 
+	private boolean validateIndex(int index) {
+		return index >= 0 && index < this.shapes.length;
+	}
+
 	/**
 	 * Fills the {@code Shape.bounds} array such that all elements around this
 	 * {@code Shape} are placed into its bounds array, and it is placed into the
 	 * correct location of the other respective {@code Shape} object's arrays
 	 * 
-	 * @param row row of the current shape in this internal array of {@code Shape} objects
-	 * @param col column of the current shape in this internal array of {@code Shape} objects
+	 * @param row   row of the current shape in this internal array of {@code Shape}
+	 *              objects
+	 * @param col   column of the current shape in this internal array of
+	 *              {@code Shape} objects
 	 * @param shape {@code Shape} object for comparison
 	 */
+	@JsonIgnore
 	private void fillRespectiveBounds(int row, int col, Shape shape) {
 
 		// Needs optimization - very hardcoded right now!
 
 		Shape[] bounds = shape.getBounds();
 
+		int[] rowOffset = { -1, -1, -1, 0, 1, 1, 1, 0 };
+		int[] colOffset = { -1, 0, 1, 1, 1, 0, -1, -1 };
+
 		for (int n = 0; n < Shape.BOUNDS_SIZE; n++) {
 
 			Shape comp;
 
-			switch (n) {
-				case 0:
-					if (row - 1 >= 0 && col - 1 >= 0) {
-						comp = this.shapes[row - 1][col - 1];
-						if (comp != null) {
-							bounds[n] = comp;
-							comp.getBounds()[n + 4] = shape;
-						}
-					}
-					break;
-				case 1:
-					if (row - 1 >= 0) {
-						comp = this.shapes[row - 1][col];
-						if (comp != null) {
-							bounds[n] = comp;
-							comp.getBounds()[n + 4] = shape;
-						}
-					}
-					break;
-				case 2:
-					if (row - 1 >= 0 && col + 1 < this.shapes.length) {
-						comp = this.shapes[row - 1][col + 1];
-						if (comp != null) {
-							bounds[n] = comp;
-							comp.getBounds()[n + 4] = shape;
-						}
-					}
-					break;
-				case 3:
-					if (col + 1 < this.shapes.length) {
-						comp = this.shapes[row][col + 1];
-						if (comp != null) {
-							bounds[n] = comp;
-							comp.getBounds()[n + 4] = shape;
-						}
-					}
-					break;
-				case 4:
-					if (row + 1 < this.shapes.length && col + 1 < this.shapes.length) {
-						comp = this.shapes[row + 1][col + 1];
-						if (comp != null) {
-							bounds[n] = comp;
-							comp.getBounds()[n - 4] = shape;
-						}
-					}
-					break;
-				case 5:
-					if (row + 1 < this.shapes.length) {
-						comp = this.shapes[row + 1][col];
-						if (comp != null) {
-							bounds[n] = comp;
-							comp.getBounds()[n - 4] = shape;
-						}
-					}
-					break;
-				case 6:
-					if (row + 1 < this.shapes.length && col - 1 >= 0) {
-						comp = this.shapes[row + 1][col - 1];
-						if (comp != null) {
-							bounds[n] = comp;
-							comp.getBounds()[n - 4] = shape;
-						}
-					}
-					break;
-				case 7:
-					if (col - 1 >= 0) {
-						comp = this.shapes[row][col - 1];
-						if (comp != null) {
-							bounds[n] = comp;
-							comp.getBounds()[n - 4] = shape;
-						}
-					}
-					break;
+			int tempRow = row + rowOffset[n];
+			int tempCol = col + colOffset[n];
+			if (this.validateIndex(tempRow) && this.validateIndex(tempCol)) {
+				comp = this.shapes[tempRow][tempCol];
+				if (comp != null) {
+					bounds[n] = comp;
+					comp.getBounds()[this.oppositeN(n)] = shape;
+				}
 			}
 
 		}
