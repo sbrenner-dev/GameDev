@@ -1,0 +1,5 @@
+{
+  "tag" : "SHAPE_X",
+  "wins" : 0,
+  "shapeTypeAsTag" : "SHAPE_X"
+}

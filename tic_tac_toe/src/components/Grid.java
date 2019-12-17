@@ -16,7 +16,7 @@ import shapes.ShapeTag;
  * Consitst of n {@code Box} in an internal array of boxes
  * 
  * @author Samuel Brenner
- * @version 1.1
+ * @version 2.0
  * @since 1.0
  *
  */
@@ -118,6 +118,9 @@ public class Grid {
 		this.init();
 	}
 
+	/**
+	 * Default constructor
+	 */
 	public Grid() {
 
 	}
@@ -201,60 +204,133 @@ public class Grid {
 		}
 	}
 
-	// @JsonIgnore
+	/**
+	 * Getter for internal matrix of {@code Shape} objects
+	 * 
+	 * @return reference to internal matrix of {@code Shape} objects
+	 */
 	public Shape[][] getShapes() {
 		return shapes;
 	}
 
-	// @JsonIgnore
+	/**
+	 * Setter for internal matrix of {@code Shape} objects
+	 * 
+	 * @param shapes new reference to assign to internal matrix
+	 */
 	public void setShapes(Shape[][] shapes) {
 		this.shapes = shapes;
 	}
 
+	/**
+	 * Getter for internal array of {@code Box} objects
+	 * 
+	 * @return reference to internal array of {@code Box} objects
+	 */
 	public Box[] getBoxes() {
 		return boxes;
 	}
 
+	/**
+	 * Setter for internal array of {@code Box} objects
+	 * 
+	 * @param boxes new reference to assign to internal array
+	 */
 	public void setBoxes(Box[] boxes) {
 		this.boxes = boxes;
 	}
 
+	/**
+	 * Getter for number of filled boxes on this {@code Grid}
+	 * 
+	 * @return number of filled boxes on this {@code Grid}
+	 */
 	public int getFilledBoxes() {
 		return filledBoxes;
 	}
 
+	/**
+	 * Setter for number of filled boxes
+	 * 
+	 * @param filledBoxes new number of filled boxes
+	 */
 	public void setFilledBoxes(int filledBoxes) {
 		this.filledBoxes = filledBoxes;
 	}
 
+	/**
+	 * Getter for if this {@code Grid} is in an initial state
+	 * 
+	 * @return true if this {@code Grid} is initiating
+	 */
 	public boolean isState_Init() {
 		return state_Init;
 	}
 
+	/**
+	 * Setter for the internal initiation flag
+	 * 
+	 * @param state_Init true if this {@code Grid} should be put into the
+	 *                   initialization state
+	 */
 	public void setState_Init(boolean state_Init) {
 		this.state_Init = state_Init;
 	}
 
+	/**
+	 * Getter for current {@code Shape} being drawn to the {@code Grid},
+	 * {@code null} if there is no shape needing to be drawn to the {@code Grid}
+	 * 
+	 * @return current {@code Shape} for this {@code Grid}
+	 */
 	public Shape getCurrent_Shape() {
 		return current_Shape;
 	}
 
+	/**
+	 * Setter for the current {@code Shape} object
+	 * 
+	 * @param current_Shape new reference for current {@code Shape} for this
+	 *                      {@code Grid}
+	 */
 	public void setCurrent_Shape(Shape current_Shape) {
 		this.current_Shape = current_Shape;
 	}
 
+	/**
+	 * Getter for the internal flag of if this {@code Grid} is/should clearing
+	 * shapes
+	 * 
+	 * @return {@code true} if this {@code Grid} is clearing {@code Shape} objects
+	 */
 	public boolean isClearShapes() {
 		return clearShapes;
 	}
 
+	/**
+	 * Setter for internal flag of if a clear state should be executed
+	 * 
+	 * @param clearShapes {@code true} if a clear state should be initialized in
+	 *                    this {@code Grid}
+	 */
 	public void setClearShapes(boolean clearShapes) {
 		this.clearShapes = clearShapes;
 	}
 
+	/**
+	 * Number of current {@code Shape} matches present during win algorithm
+	 * execution
+	 * 
+	 * @return int representing the current number of matches on this {@code Grid}
+	 */
 	public int getCurr_Matches() {
 		return curr_Matches;
 	}
 
+	/**
+	 * Sets the number of current matches on this {@code Grid}
+	 * @param curr_Matches
+	 */
 	public void setCurr_Matches(int curr_Matches) {
 		this.curr_Matches = curr_Matches;
 	}
@@ -324,9 +400,11 @@ public class Grid {
 
 			this.state_Init = false;
 			for (int mult = 1; mult < Constants.GAME_SIZE; mult++) {
-				g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y, this.x + mult * Grid.BOX_WIDTH,
+				g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y,
+						this.x + mult * Grid.BOX_WIDTH,
 						this.y + Constants.GAME_SIZE * Grid.BOX_WIDTH);
-				g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH, this.x + Constants.GAME_SIZE * Grid.BOX_WIDTH,
+				g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH,
+						this.x + Constants.GAME_SIZE * Grid.BOX_WIDTH,
 						this.y + mult * Grid.BOX_WIDTH);
 			}
 
@@ -367,9 +445,11 @@ public class Grid {
 		if (this.state_Init) {
 			this.state_Init = false;
 			for (int mult = 1; mult < Constants.GAME_SIZE; mult++) {
-				g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y, this.x + mult * Grid.BOX_WIDTH,
+				g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y,
+						this.x + mult * Grid.BOX_WIDTH,
 						this.y + Constants.GAME_SIZE * Grid.BOX_WIDTH);
-				g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH, this.x + Constants.GAME_SIZE * Grid.BOX_WIDTH,
+				g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH,
+						this.x + Constants.GAME_SIZE * Grid.BOX_WIDTH,
 						this.y + mult * Grid.BOX_WIDTH);
 			}
 		}
@@ -385,16 +465,18 @@ public class Grid {
 		int workingX = this.x;
 		int workingY = this.y;
 
-		for (int index = 0; index < this.boxes.length; index++) {
+		if (!Game.FROM_SAVE_STATE) {
+			for (int index = 0; index < this.boxes.length; index++) {
 
-			if (index % Constants.GAME_SIZE == 0 && index > 0) {
-				workingY += Grid.BOX_WIDTH;
-				workingX = this.x;
+				if (index % Constants.GAME_SIZE == 0 && index > 0) {
+					workingY += Grid.BOX_WIDTH;
+					workingX = this.x;
+				}
+
+				this.boxes[index] = new Box(workingX, workingY, Grid.BOX_WIDTH);
+
+				workingX += Grid.BOX_WIDTH;
 			}
-
-			this.boxes[index] = new Box(workingX, workingY, Grid.BOX_WIDTH);
-
-			workingX += Grid.BOX_WIDTH;
 		}
 
 		if (Game.FROM_SAVE_STATE) {
@@ -443,9 +525,11 @@ public class Grid {
 			int relRow = index / Constants.GAME_SIZE;
 			int relCol = index % Constants.GAME_SIZE;
 
-			if (x >= startX && x <= endX && y >= startY && y <= endY && this.shapes[relRow][relCol] == null) {
-				
-				this.current_Shape = new Shape(startX + Shape.INDENT, startY + Shape.INDENT, tag);
+			if (x >= startX && x <= endX && y >= startY && y <= endY
+					&& this.shapes[relRow][relCol] == null) {
+
+				this.current_Shape = new Shape(startX + Shape.INDENT,
+						startY + Shape.INDENT, tag);
 
 				this.fillRespectiveBounds(relRow, relCol, this.current_Shape);
 

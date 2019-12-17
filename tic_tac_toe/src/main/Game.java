@@ -287,7 +287,6 @@ public class Game extends JFrame {
 		this.pX = pX;
 		this.pO = pO;
 		this.active_Player = active.getShapeTypeAsTag() == ShapeTag.SHAPE_O ? this.pO : this.pX;
-		System.out.println(active.getShapeTypeAsTag());
 
 		this.hud = new HUD(this.pX, this.pO, this.active_Player.getShapeTypeAsTag());
 

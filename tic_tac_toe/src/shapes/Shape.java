@@ -5,6 +5,8 @@ import java.awt.Graphics;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import components.Grid;
 
 /**
@@ -15,6 +17,7 @@ import components.Grid;
  *
  */
 
+@JsonIgnoreProperties(value = {"bounds"})
 public class Shape {
 
 	/**

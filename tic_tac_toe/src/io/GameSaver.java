@@ -1,11 +1,10 @@
 package io;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import components.Grid;
 import components.Player;
@@ -16,7 +15,7 @@ public class GameSaver {
 
 	public static void saveGame(Grid grid, Player pX, Player pO, Player active, String gameName) {
 
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 		String pathName = "saved\\" + gameName;
 
@@ -41,12 +40,7 @@ public class GameSaver {
 			mapper.writeValue(activeFile, active);
 			mapper.writeValue(constantsFile, new ConstantsWrapper(Constants.GAME_SIZE, Constants.NUM_TO_MATCH));
 		} catch (IOException e) {
-			try {
-				e.printStackTrace(new PrintStream(new File("saveBug.txt")));
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-			}
-			
+			e.printStackTrace();
 		}
 
 	}

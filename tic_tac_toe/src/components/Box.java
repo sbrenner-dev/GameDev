@@ -2,8 +2,17 @@ package components;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
+/**
+ * Stores information about a box on a {@code Grid} object, which contain an
+ * array of {@code Box objects}
+ * 
+ * @author Samuel Brenner
+ * @version 2.0
+ *
+ */
+
 public class Box {
-	
+
 	/**
 	 * Upper left hand x coordinate for this {@code Grid.Box}
 	 */
@@ -14,26 +23,50 @@ public class Box {
 	 */
 	private int startY;
 
+	/**
+	 * Getter for starting x coordinate
+	 * @return starting x coordinate
+	 */
 	public int getStartX() {
 		return startX;
 	}
 
+	/**
+	 * Setter for starting x coordinate
+	 * @param startX new starting x coordinate
+	 */
 	public void setStartX(int startX) {
 		this.startX = startX;
 	}
 
+	/**
+	 * Getter for starting y coordinate
+	 * @return starting y coordinate
+	 */
 	public int getStartY() {
 		return startY;
 	}
 
+	/**
+	 * Setter for starting y coordinate
+	 * @param startY new starting y coordinate
+	 */
 	public void setStartY(int startY) {
 		this.startY = startY;
 	}
 
+	/**
+	 * Getter for width of box
+	 * @return width of box
+	 */
 	public int getWidth() {
 		return width;
 	}
 
+	/**
+	 * Setter for width of box
+	 * @param width new width
+	 */
 	public void setWidth(int width) {
 		this.width = width;
 	}
@@ -56,9 +89,12 @@ public class Box {
 		this.startY = startY;
 		this.width = width;
 	}
-	
+
+	/**
+	 * Default constructor
+	 */
 	public Box() {
-		
+
 	}
 
 	/**
@@ -75,7 +111,8 @@ public class Box {
 	 */
 	@JsonIgnore
 	public int[] boxCoordinates() {
-		return new int[] { this.startX, this.startY, this.startX + this.width, this.startY + this.width };
+		return new int[] { this.startX, this.startY, this.startX + this.width,
+				this.startY + this.width };
 	}
 
 }

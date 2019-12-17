@@ -7,7 +7,7 @@ import java.io.PrintStream;
 
 import javax.swing.JOptionPane;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import components.Grid;
 import components.Player;
