@@ -1,5 +1,4 @@
 {
   "tag" : "SHAPE_O",
-  "wins" : 0,
-  "shapeTypeAsTag" : "SHAPE_O"
+  "wins" : 0
 }

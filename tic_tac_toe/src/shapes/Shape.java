@@ -3,8 +3,7 @@ package shapes;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import components.Grid;
@@ -100,18 +99,16 @@ public class Shape {
 	 * 
 	 * @param g Graphics component
 	 */
+	@JsonIgnore
 	public void draw(Graphics g) {
+		
+		g.setColor(this.color);
+
+		int width = Grid.BOX_WIDTH - 2 * Shape.INDENT;
+		
 		if (tag == ShapeTag.SHAPE_O) {
-			g.setColor(this.color);
-
-			int width = Grid.BOX_WIDTH - 2 * Shape.INDENT;
-
 			g.drawOval(this.x, this.y, width, width);
 		} else {
-			g.setColor(this.color);
-
-			int width = Grid.BOX_WIDTH - 2 * Shape.INDENT;
-
 			g.drawLine(this.x, this.y, this.x + width, this.y + width);
 			g.drawLine(this.x, this.y + width, this.x + width, this.y);
 		}

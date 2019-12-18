@@ -3,7 +3,7 @@ package components;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import constants.Constants;
 import main.Game;
@@ -162,6 +162,7 @@ public class Grid {
 							if (validated) {
 								return new Object[] { validated, me.getTag() };
 							}
+							this.curr_Matches = 0;
 						}
 					}
 				}
@@ -542,6 +543,7 @@ public class Grid {
 		return false;
 	}
 
+	@JsonIgnore
 	private boolean validateIndex(int index) {
 		return index >= 0 && index < this.shapes.length;
 	}
@@ -559,8 +561,6 @@ public class Grid {
 	 */
 	@JsonIgnore
 	private void fillRespectiveBounds(int row, int col, Shape shape) {
-
-		// Needs optimization - very hardcoded right now!
 
 		Shape[] bounds = shape.getBounds();
 

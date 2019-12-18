@@ -55,11 +55,7 @@ public class GameLoader {
 			new Game(grid, pX, pO, active, gameName);
 
 		} catch (IOException e) {
-			try {
-				e.printStackTrace(new PrintStream(new File("loadBug.txt")));
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-			}
+			e.printStackTrace();
 		}
 
 		return true;

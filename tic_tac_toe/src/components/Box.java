@@ -1,6 +1,6 @@
 package components;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Stores information about a box on a {@code Grid} object, which contain an
