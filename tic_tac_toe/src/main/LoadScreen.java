@@ -188,7 +188,7 @@ public class LoadScreen extends JFrame {
 	 * {@code TextField} members of this {@code LoadScreen} instance
 	 * 
 	 * @author Samuel Brenner
-	 * @version 1.1
+	 * @since 1.1
 	 *
 	 */
 	private class TextFieldEnterOption extends KeyAdapter {

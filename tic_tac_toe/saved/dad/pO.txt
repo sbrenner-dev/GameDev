@@ -1,0 +1,4 @@
+{
+  "tag" : "SHAPE_O",
+  "wins" : 0
+}

@@ -1,0 +1,59 @@
+{
+  "shapes" : [ [ null, {
+    "x" : 489,
+    "y" : 135,
+    "tag" : "SHAPE_X"
+  }, null ], [ {
+    "x" : 219,
+    "y" : 405,
+    "tag" : "SHAPE_O"
+  }, {
+    "x" : 489,
+    "y" : 405,
+    "tag" : "SHAPE_X"
+  }, null ], [ null, null, null ] ],
+  "boxes" : [ {
+    "startX" : 192,
+    "startY" : 108,
+    "width" : 270
+  }, {
+    "startX" : 462,
+    "startY" : 108,
+    "width" : 270
+  }, {
+    "startX" : 732,
+    "startY" : 108,
+    "width" : 270
+  }, {
+    "startX" : 192,
+    "startY" : 378,
+    "width" : 270
+  }, {
+    "startX" : 462,
+    "startY" : 378,
+    "width" : 270
+  }, {
+    "startX" : 732,
+    "startY" : 378,
+    "width" : 270
+  }, {
+    "startX" : 192,
+    "startY" : 648,
+    "width" : 270
+  }, {
+    "startX" : 462,
+    "startY" : 648,
+    "width" : 270
+  }, {
+    "startX" : 732,
+    "startY" : 648,
+    "width" : 270
+  } ],
+  "x" : 192,
+  "y" : 108,
+  "filledBoxes" : 3,
+  "state_Init" : false,
+  "current_Shape" : null,
+  "clearShapes" : false,
+  "curr_Matches" : 0
+}

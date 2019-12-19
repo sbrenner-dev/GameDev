@@ -330,24 +330,45 @@ public class Grid {
 
 	/**
 	 * Sets the number of current matches on this {@code Grid}
+	 * 
 	 * @param curr_Matches
 	 */
 	public void setCurr_Matches(int curr_Matches) {
 		this.curr_Matches = curr_Matches;
 	}
 
+	/**
+	 * Setter for upper left x coordinate for this {@code Grid}
+	 * 
+	 * @param x new x value
+	 */
 	public void setX(int x) {
 		this.x = x;
 	}
 
+	/**
+	 * Setter for upper left y coordinate for this {@code Grid}
+	 * 
+	 * @param y new y value
+	 */
 	public void setY(int y) {
 		this.y = y;
 	}
 
+	/**
+	 * Getter for upper left x coordinate
+	 * 
+	 * @return upper left x coordinate
+	 */
 	public int getX() {
 		return x;
 	}
 
+	/**
+	 * Getter for upper left y coordinate
+	 * 
+	 * @return upper left y coordinate
+	 */
 	public int getY() {
 		return y;
 	}
@@ -401,11 +422,9 @@ public class Grid {
 
 			this.state_Init = false;
 			for (int mult = 1; mult < Constants.GAME_SIZE; mult++) {
-				g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y,
-						this.x + mult * Grid.BOX_WIDTH,
+				g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y, this.x + mult * Grid.BOX_WIDTH,
 						this.y + Constants.GAME_SIZE * Grid.BOX_WIDTH);
-				g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH,
-						this.x + Constants.GAME_SIZE * Grid.BOX_WIDTH,
+				g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH, this.x + Constants.GAME_SIZE * Grid.BOX_WIDTH,
 						this.y + mult * Grid.BOX_WIDTH);
 			}
 
@@ -446,11 +465,9 @@ public class Grid {
 		if (this.state_Init) {
 			this.state_Init = false;
 			for (int mult = 1; mult < Constants.GAME_SIZE; mult++) {
-				g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y,
-						this.x + mult * Grid.BOX_WIDTH,
+				g.drawLine(this.x + mult * Grid.BOX_WIDTH, this.y, this.x + mult * Grid.BOX_WIDTH,
 						this.y + Constants.GAME_SIZE * Grid.BOX_WIDTH);
-				g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH,
-						this.x + Constants.GAME_SIZE * Grid.BOX_WIDTH,
+				g.drawLine(this.x, this.y + mult * Grid.BOX_WIDTH, this.x + Constants.GAME_SIZE * Grid.BOX_WIDTH,
 						this.y + mult * Grid.BOX_WIDTH);
 			}
 		}
@@ -526,11 +543,9 @@ public class Grid {
 			int relRow = index / Constants.GAME_SIZE;
 			int relCol = index % Constants.GAME_SIZE;
 
-			if (x >= startX && x <= endX && y >= startY && y <= endY
-					&& this.shapes[relRow][relCol] == null) {
+			if (x >= startX && x <= endX && y >= startY && y <= endY && this.shapes[relRow][relCol] == null) {
 
-				this.current_Shape = new Shape(startX + Shape.INDENT,
-						startY + Shape.INDENT, tag);
+				this.current_Shape = new Shape(startX + Shape.INDENT, startY + Shape.INDENT, tag);
 
 				this.fillRespectiveBounds(relRow, relCol, this.current_Shape);
 

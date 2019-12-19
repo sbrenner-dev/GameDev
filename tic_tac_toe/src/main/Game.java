@@ -312,6 +312,9 @@ public class Game extends JFrame {
 					String name = Game.this.name;
 					if (Game.this.name == null) {
 						name = JOptionPane.showInputDialog("Enter save name: ");
+						if(name == null) {
+							return;
+						}
 						Game.this.name = name;
 						Game.this.setTitle(name);
 					} else {
@@ -343,7 +346,6 @@ public class Game extends JFrame {
 		});
 
 		this.setLocationRelativeTo(null);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
 		this.setResizable(false);
 
@@ -352,29 +354,29 @@ public class Game extends JFrame {
 	}
 
 	public void paint(Graphics g) {
-		if (Game.this.state_Init) {
-			Game.this.state_Init = false;
+		if (this.state_Init) {
+			this.state_Init = false;
 			g.setColor(Color.BLACK);
 			g.fillRect(0, 0, Game.WIDTH, Game.HEIGHT);
-			Game.this.game_Grid.draw(g);
-			Game.this.hud.draw(g);
+			this.game_Grid.draw(g);
+			this.hud.draw(g);
 		}
 
-		if (Game.this.state_Changed) {
-			Game.this.game_Grid.draw(g);
-			Game.this.hud.draw(g);
-			Game.this.state_Changed = false;
+		if (this.state_Changed) {
+			this.game_Grid.draw(g);
+			this.hud.draw(g);
+			this.state_Changed = false;
 		}
 
-		if (Game.this.game_Grid.isFilled() || Game.this.state_Won) {
+		if (this.game_Grid.isFilled() || this.state_Won) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
-			Game.this.game_Grid.clear();
-			Game.this.state_Won = false;
-			Game.this.state_Changed = true;
+			this.game_Grid.clear();
+			this.state_Won = false;
+			this.state_Changed = true;
 		}
 	}
 
